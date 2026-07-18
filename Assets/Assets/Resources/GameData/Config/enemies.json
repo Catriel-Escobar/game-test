@@ -1,0 +1,42 @@
+{
+    "enemies": [
+        {
+            "id": "zombie",
+            "health": 120,
+            "damage": 10,
+            "speed": 3.5,
+            "experience": 25,
+            "aggroRange": 10,
+            "loseTargetRange": 18,
+            "attackRange": 2,
+            "rotationSpeed": 300,
+            "combat": {
+                "physicalAttack": 10,
+                "magicAttack": 0,
+                "physicalDefense": 4,
+                "magicDefense": 2,
+                "criticalChance": 0.05,
+                "criticalDamage": 1.5
+            }
+        },
+        {
+            "id": "skeleton",
+            "health": 80,
+            "damage": 15,
+            "speed": 4.5,
+            "experience": 30,
+            "aggroRange": 12,
+            "loseTargetRange": 20,
+            "attackRange": 2.5,
+            "rotationSpeed": 400,
+            "combat": {
+                "physicalAttack": 15,
+                "magicAttack": 0,
+                "physicalDefense": 2,
+                "magicDefense": 3,
+                "criticalChance": 0.1,
+                "criticalDamage": 1.75
+            }
+        }
+    ]
+}

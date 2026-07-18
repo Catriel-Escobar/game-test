@@ -1,0 +1,27 @@
+{
+    "baseStats": {
+        "strength": 100,
+        "dexterity": 10,
+        "intelligence": 10,
+        "vitality": 10
+    },
+
+    "baseResources": {
+        "health": 100,
+        "mana": 50
+    },
+
+    "movement": {
+        "gravity": -21,
+        "speed": 5,
+        "rotationSpeed": 725
+    },
+
+    "combat": {
+        "attackSpeed": 1.0,
+        "criticalChance": 0.05,
+        "criticalDamage": 1.5
+    },
+
+    "startingAttack": "basic_attack"
+}

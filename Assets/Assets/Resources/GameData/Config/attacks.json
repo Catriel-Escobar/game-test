@@ -1,0 +1,29 @@
+{
+    "attacks": [
+        {
+            "id": "basic_attack",
+            "animation_id": "BasicAttack",
+            "duration": 0.8,
+            "damageMultiplier": 1.0,
+            "damageType": 0,
+            "range": 2.0
+        },
+        {
+            "id": "heavy_attack",
+            "animation_id": "HeavyAttack",
+            "duration": 1.4,
+            "damageMultiplier": 2.5,
+            "damageType": 0,
+            "range": 2.5
+        },
+        {
+            "id": "fireball",
+            "animation_id": "CastFireball",
+            "duration": 1.1,
+            "damageMultiplier": 3.0,
+            "damageType": 1,
+            "manaCost": 25,
+            "cooldown": 5
+        }
+    ]
+}

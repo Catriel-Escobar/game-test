@@ -1,0 +1,19 @@
+{
+    "strength": {
+        "damagePerPoint": 2
+    },
+
+    "dexterity": {
+        "attackSpeedPerPoint": 0.01,
+        "criticalChancePerPoint": 0.002
+    },
+
+    "intelligence": {
+        "manaPerPoint": 5,
+        "spellDamagePerPoint": 2
+    },
+
+    "vitality": {
+        "healthPerPoint": 10
+    }
+}

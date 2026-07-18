@@ -1,0 +1,14 @@
+{
+    "items": [
+        {
+            "id": "iron_sword",
+            "type": 0,
+            "damage": 15
+        },
+        {
+            "id": "health_potion",
+            "type": 1,
+            "heal": 100
+        }
+    ]
+}

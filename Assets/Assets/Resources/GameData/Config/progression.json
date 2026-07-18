@@ -1,0 +1,26 @@
+{
+    "maxLevel": 100,
+    "baseExperience": 100,
+
+    "segments": [
+        {
+            "untilLevel": 10,
+            "multiplier": 1.10
+        },
+        {
+            "untilLevel": 30,
+            "multiplier": 1.08
+        },
+        {
+            "untilLevel": 60,
+            "multiplier": 1.06
+        },
+        {
+            "untilLevel": 100,
+            "multiplier": 1.04
+        }
+    ],
+
+    "statPointsPerLevel": 5,
+    "skillPointsPerLevel": 1
+}
