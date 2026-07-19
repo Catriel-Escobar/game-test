@@ -11,4 +11,5 @@ public class GameConfig
     public string items;
     public string enemies;
     public string stats;
+    public string spawners;
 }

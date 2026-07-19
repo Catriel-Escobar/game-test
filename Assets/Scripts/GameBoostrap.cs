@@ -12,5 +12,11 @@ public class GameBootstrap : MonoBehaviour
         _player.Initialize(ConfigBoostrap);
         _playerResourcesUI.Initialize(_player);
         _playerInputs.Initialize(_player);
+
+        if (FindObjectOfType<SpawnerManager>() == null)
+        {
+            GameObject managerObj = new GameObject("SpawnerManager");
+            managerObj.AddComponent<SpawnerManager>();
+        }
     }
 }

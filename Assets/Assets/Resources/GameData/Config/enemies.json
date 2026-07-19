@@ -17,7 +17,9 @@
                 "magicDefense": 2,
                 "criticalChance": 0.05,
                 "criticalDamage": 1.5
-            }
+            },
+            "prefabPath": "Prefabs/Mobs/Zombie",
+            "tags": ["undead", "melee", "slow"]
         },
         {
             "id": "skeleton",
@@ -36,7 +38,9 @@
                 "magicDefense": 3,
                 "criticalChance": 0.1,
                 "criticalDamage": 1.75
-            }
+            },
+            "prefabPath": "Prefabs/Mobs/Skeleton",
+            "tags": ["undead", "melee", "fast"]
         }
     ]
 }

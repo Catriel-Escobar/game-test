@@ -1,0 +1,19 @@
+{
+    "spawners": [
+        {
+            "id": "cemetery_01",
+            "position": [0, 0, 0],
+            "radius": 10,
+            "maxAlive": 10,
+            "spawnInterval": 3.0,
+            "respawnDelay": 5.0,
+            "healthMultiplier": 1.0,
+            "damageMultiplier": 1.0,
+            "enemyTypes": [
+                { "enemyId": "zombie", "weight": 80 },
+                { "enemyId": "skeleton", "weight": 20 }
+            ],
+            "waves": null
+        }
+    ]
+}

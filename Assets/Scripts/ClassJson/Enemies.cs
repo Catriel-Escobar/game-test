@@ -1,8 +1,6 @@
-
-
-
-
 using System;
+using System.Collections.Generic;
+
 [Serializable]
 public class EnemiesConfig
 {
@@ -21,6 +19,8 @@ public class Enemy
     public float attackRange;
     public float rotationSpeed;
     public EnemyCombatConfig combat;
+    public string prefabPath;
+    public List<string> tags;
 }
 
 [Serializable]

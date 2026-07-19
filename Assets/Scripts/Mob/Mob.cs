@@ -12,6 +12,8 @@ public class Mob : MonoBehaviour,ICombatEntity
     private Enemy _enemyConfig;
     private CombatStats _combatStats;
     private float _currentSpeed;
+    private float _healthMultiplier;
+    private float _damageMultiplier;
 
     private const float SpeedSmoothing = 8f;
 
@@ -29,9 +31,11 @@ public class Mob : MonoBehaviour,ICombatEntity
 
         _resources = GetComponent<MobResources>();
         _animation = GetComponent<MobAnimationController>();
+        _healthMultiplier = spawnData.HealthMultiplier;
+        _damageMultiplier = spawnData.DamageMultiplier;
         Debug.Log(_resources);
         ResolveEnemyConfig(spawnData);
-        _resources?.Initialize(_enemyConfig);
+        _resources?.Initialize(_enemyConfig, _healthMultiplier);
 
         _movement = new MobMovement(agent);
 
@@ -99,8 +103,8 @@ public class Mob : MonoBehaviour,ICombatEntity
         {
             _combatStats = new CombatStats
             {
-                PhysicalAttack = _enemyConfig.combat.physicalAttack,
-                MagicAttack = _enemyConfig.combat.magicAttack,
+                PhysicalAttack = Mathf.RoundToInt(_enemyConfig.combat.physicalAttack * _damageMultiplier),
+                MagicAttack = Mathf.RoundToInt(_enemyConfig.combat.magicAttack * _damageMultiplier),
                 PhysicalDefense = _enemyConfig.combat.physicalDefense,
                 MagicDefense = _enemyConfig.combat.magicDefense,
                 CriticalChance = _enemyConfig.combat.criticalChance,
@@ -114,7 +118,8 @@ public class Mob : MonoBehaviour,ICombatEntity
 
     private void BuildFallbackCombatStats()
     {
-        int physicalAttack = Mathf.RoundToInt(_enemyConfig != null ? _enemyConfig.damage : 0f);
+        int physicalAttack = Mathf.RoundToInt(
+            (_enemyConfig != null ? _enemyConfig.damage : 0f) * _damageMultiplier);
 
         _combatStats = new CombatStats
         {
@@ -171,6 +176,11 @@ public class Mob : MonoBehaviour,ICombatEntity
     private void HandleDeath()
     {
         IsDead = true;
+
+        if (SpawnerManager.Instance != null)
+        {
+            SpawnerManager.Instance.OnMobDied(this);
+        }
 
         if (_lastAttacker is Player player)
         {

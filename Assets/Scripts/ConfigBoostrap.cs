@@ -10,6 +10,7 @@ public class ConfigBoostrap
    public EnemiesConfig EnemiesConfig;
    public ProgressionConfig ProgressionConfig;
    public PlayerConfig PlayerConfig;
+   public SpawnersConfig SpawnersConfig;
   public void Initialize()
 {
         Current = this;
@@ -28,6 +29,7 @@ public class ConfigBoostrap
     StatsConfig = LoadConfig<StatsConfig>(gameConfig.stats);
     ItemsConfig = LoadConfig<ItemsConfig>(gameConfig.items);
     EnemiesConfig  = LoadConfig<EnemiesConfig>(gameConfig.enemies);
+    SpawnersConfig = LoadConfig<SpawnersConfig>(gameConfig.spawners);
     Debug.Log($"GameConfig:\n{JsonUtility.ToJson(gameConfig, true)}");
     Debug.Log($"PlayerConfig:\n{JsonUtility.ToJson(PlayerConfig, true)}");
     Debug.Log($"AttackConfig:\n{JsonUtility.ToJson(AttackConfig, true)}");
@@ -35,6 +37,7 @@ public class ConfigBoostrap
     Debug.Log($"StatsConfig:\n{JsonUtility.ToJson(StatsConfig, true)}");
     Debug.Log($"ItemsConfig:\n{JsonUtility.ToJson(ItemsConfig, true)}");
     Debug.Log($"EnemiesConfig:\n{JsonUtility.ToJson(EnemiesConfig, true)}");
+    Debug.Log($"SpawnersConfig:\n{JsonUtility.ToJson(SpawnersConfig, true)}");
 }
 
 private T LoadConfig<T>(string path)

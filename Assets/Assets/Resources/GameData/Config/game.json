@@ -3,6 +3,7 @@
     "attacks": "GameData/Config/attacks",
     "progression": "GameData/Config/progression",
     "items": "GameData/Config/items",
-    "enemies":"GameData/Config/enemies",
-    "stats":"GameData/Config/stats"
+    "enemies": "GameData/Config/enemies",
+    "stats": "GameData/Config/stats",
+    "spawners": "GameData/Config/spawners"
 }

@@ -12,9 +12,10 @@ public class MobResources : MonoBehaviour
 	public event Action<int, int> OnHealthChanged;
 	public event Action OnHit;
 
-	public void Initialize(Enemy enemyConfig)
+	public void Initialize(Enemy enemyConfig, float healthMultiplier = 1f)
 	{
-		int startingHp = enemyConfig != null ? Mathf.RoundToInt(enemyConfig.health) : 1;
+		int baseHp = enemyConfig != null ? Mathf.RoundToInt(enemyConfig.health) : 1;
+		int startingHp = Mathf.RoundToInt(baseHp * healthMultiplier);
 		CurrentHp = startingHp;
 		MaxHp = startingHp;
 

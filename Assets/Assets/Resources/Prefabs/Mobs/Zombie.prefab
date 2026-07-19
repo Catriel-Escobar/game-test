@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: 5025056672339360949}
   - component: {fileID: 1092121149766769575}
   m_Layer: 0
-  m_Name: MobTest
+  m_Name: Zombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
