@@ -170,7 +170,7 @@ public class Mob : MonoBehaviour,ICombatEntity
             ? damageData.FinalDamage
             : damageData.BaseDamage;
 
-        _resources.TakeDamage(damage);
+        _resources.TakeDamage(damage, damageData.IsCritical);
     }
 
     private void HandleDeath()

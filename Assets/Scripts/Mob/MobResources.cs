@@ -22,13 +22,21 @@ public class MobResources : MonoBehaviour
 		OnHealthChanged?.Invoke(CurrentHp, MaxHp);
 	}
 
-	public void TakeDamage(int damage)
+	public void TakeDamage(int damage, bool isCritical = false)
 	{
 		if (IsDead)
 			return;
 
 		CurrentHp = Mathf.Max(CurrentHp - damage, 0);
 		OnHealthChanged?.Invoke(CurrentHp, MaxHp);
+
+		if (DamageNumberManager.Instance != null)
+		{
+			DamageNumberManager.Instance.Show(
+				transform.position + Vector3.up * 2f,
+				damage,
+				isCritical);
+		}
 
 		if (CurrentHp <= 0)
 			Die();
