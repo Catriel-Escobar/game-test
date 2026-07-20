@@ -18,6 +18,7 @@ public class SpawnerConfig
     public float respawnDelay;
     public float healthMultiplier;
     public float damageMultiplier;
+    public bool useWaves;
     public List<EnemyTypeWeight> enemyTypes;
     public List<WaveConfig> waves;
 }

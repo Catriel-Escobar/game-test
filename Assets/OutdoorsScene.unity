@@ -772,8 +772,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.0023084164, y: 0.010519701, z: 0.0031542566}
-  m_Center: {x: 0.004518218, y: -0.008720854, z: 0.0055756215}
+  m_Size: {x: 0.0023084164, y: 0.002, z: 0.01}
+  m_Center: {x: 0, y: 0, z: 0.003}
 --- !u!1 &347765016 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3624111914066983723, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
@@ -2264,8 +2264,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 448.5, y: -394}
-  m_SizeDelta: {x: 897, y: 0}
+  m_AnchoredPosition: {x: 960, y: -1075}
+  m_SizeDelta: {x: 1920, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1164545788
 MonoBehaviour:

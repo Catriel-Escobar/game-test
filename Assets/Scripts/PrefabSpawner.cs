@@ -1,46 +1,60 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PrefabSpawner : MonoBehaviour
 {
     private SpawnerConfig config;
-    private List<Mob> aliveMobs = new();
-    private float spawnTimer;
+    private ISpawnMode spawnMode;
     private bool initialized;
 
-    public int AliveCount => aliveMobs.Count;
+    public int AliveCount => spawnMode != null ? spawnMode.AliveCount : 0;
+    public ISpawnMode SpawnMode => spawnMode;
+    public bool UseWaves => config != null && config.useWaves;
 
     public void Initialize(SpawnerConfig spawnerConfig)
     {
         config = spawnerConfig;
+        ApplyMode(config.useWaves);
         initialized = true;
+    }
 
-        for (int i = 0; i < config.maxAlive; i++)
+    public void SetMode(bool useWaves)
+    {
+        if (config == null) return;
+        config.useWaves = useWaves;
+        ApplyMode(useWaves);
+    }
+
+    private void ApplyMode(bool useWaves)
+    {
+        if (useWaves && config.waves != null && config.waves.Count > 0)
         {
-            SpawnMob();
+            spawnMode = new WaveMode();
         }
+        else
+        {
+            spawnMode = new RespawnConstantMode();
+        }
+
+        spawnMode.Initialize(config, SpawnMob);
     }
 
     private void Update()
     {
-        if (!initialized || config == null) return;
-
-        spawnTimer += Time.deltaTime;
-
-        if (spawnTimer >= config.spawnInterval && aliveMobs.Count < config.maxAlive)
-        {
-            SpawnMob();
-            spawnTimer = 0f;
-        }
+        if (!initialized || spawnMode == null) return;
+        spawnMode.Update(Time.deltaTime);
     }
 
-    private void SpawnMob()
+    public void OnMobDied(Mob mob)
     {
-        string enemyId = SelectEnemyByWeight();
-        if (string.IsNullOrEmpty(enemyId)) return;
+        spawnMode?.OnMobDied(mob);
+    }
+
+    private Mob SpawnMob(string enemyId, float healthMultiplier, float damageMultiplier)
+    {
+        if (string.IsNullOrEmpty(enemyId)) return null;
 
         GameObject prefab = SpawnerManager.Instance.GetPrefab(enemyId);
-        if (prefab == null) return;
+        if (prefab == null) return null;
 
         Vector2 randomPoint = Random.insideUnitCircle * config.radius;
         Vector3 spawnPosition = transform.position + new Vector3(randomPoint.x, 0f, randomPoint.y);
@@ -52,46 +66,17 @@ public class PrefabSpawner : MonoBehaviour
             SpawnPosition = spawnPosition,
             PatrolRadius = config.radius,
             EnemyId = enemyId,
-            HealthMultiplier = config.healthMultiplier,
-            DamageMultiplier = config.damageMultiplier
+            HealthMultiplier = healthMultiplier,
+            DamageMultiplier = damageMultiplier
         };
 
         if (obj.TryGetComponent<Mob>(out var mob))
         {
             mob.Initialize(spawnData);
-            aliveMobs.Add(mob);
-        }
-    }
-
-    private string SelectEnemyByWeight()
-    {
-        if (config?.enemyTypes == null || config.enemyTypes.Count == 0)
-            return null;
-
-        int totalWeight = 0;
-        for (int i = 0; i < config.enemyTypes.Count; i++)
-        {
-            totalWeight += config.enemyTypes[i].weight;
+            return mob;
         }
 
-        if (totalWeight <= 0) return config.enemyTypes[0].enemyId;
-
-        int random = Random.Range(0, totalWeight);
-        int cumulative = 0;
-
-        for (int i = 0; i < config.enemyTypes.Count; i++)
-        {
-            cumulative += config.enemyTypes[i].weight;
-            if (random < cumulative)
-                return config.enemyTypes[i].enemyId;
-        }
-
-        return config.enemyTypes[config.enemyTypes.Count - 1].enemyId;
-    }
-
-    public void OnMobDied(Mob mob)
-    {
-        aliveMobs.Remove(mob);
+        return null;
     }
 
     private void OnDrawGizmosSelected()
