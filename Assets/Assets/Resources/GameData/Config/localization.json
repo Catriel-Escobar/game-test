@@ -1,0 +1,34 @@
+{
+    "defaultLanguage": "en",
+    "entries": [
+        { "key": "menu.play",            "en": "Play",            "es": "Jugar" },
+        { "key": "menu.settings",        "en": "Settings",        "es": "Ajustes" },
+        { "key": "menu.credits",         "en": "Credits",         "es": "Creditos" },
+        { "key": "menu.quit",            "en": "Quit",            "es": "Salir" },
+        { "key": "menu.resume",          "en": "Resume",          "es": "Continuar" },
+        { "key": "menu.mainMenu",        "en": "Main Menu",       "es": "Menu Principal" },
+        { "key": "menu.language",        "en": "Language",        "es": "Idioma" },
+
+        { "key": "hud.hp",               "en": "HP",              "es": "VIDA" },
+        { "key": "hud.mp",               "en": "MP",              "es": "MANA" },
+        { "key": "hud.xp",               "en": "XP",              "es": "EXP" },
+        { "key": "hud.level",            "en": "Lv.",             "es": "Nv." },
+
+        { "key": "item.sword",           "en": "Sword",           "es": "Espada" },
+        { "key": "item.shield",          "en": "Shield",          "es": "Escudo" },
+        { "key": "item.potion",          "en": "Health Potion",   "es": "Pocion de Vida" },
+        { "key": "item.manaPotion",      "en": "Mana Potion",     "es": "Pocion de Mana" },
+
+        { "key": "enemy.zombie",         "en": "Zombie",          "es": "Zombi" },
+        { "key": "enemy.skeleton",       "en": "Skeleton",        "es": "Esqueleto" },
+
+        { "key": "combat.criticalHit",   "en": "Critical Hit!",   "es": "Golpe Critico!" },
+        { "key": "combat.miss",          "en": "Miss",            "es": "Fallo" },
+
+        { "key": "pause.title",          "en": "PAUSE",           "es": "PAUSA" },
+        { "key": "pause.resume",         "en": "Resume",          "es": "Continuar" },
+        { "key": "pause.settings",       "en": "Settings",        "es": "Ajustes" },
+        { "key": "pause.language",       "en": "EN",              "es": "ES" },
+        { "key": "pause.quit",           "en": "Quit",            "es": "Salir" }
+    ]
+}

@@ -5,7 +5,7 @@ public class GameBootstrap : MonoBehaviour
     [SerializeField] private Player _player;
     [SerializeField] private PlayerResourcesUI _playerResourcesUI;
     [SerializeField] private PlayerInputs _playerInputs;
-    private void Awake()
+    private void Start()
     {
         var ConfigBoostrap = new ConfigBoostrap();
         ConfigBoostrap.Initialize();
@@ -18,5 +18,9 @@ public class GameBootstrap : MonoBehaviour
             GameObject managerObj = new GameObject("SpawnerManager");
             managerObj.AddComponent<SpawnerManager>();
         }
+
+        GameObject pauseMenuObj = new GameObject("PauseMenu");
+        PauseMenu pauseMenu = pauseMenuObj.AddComponent<PauseMenu>();
+        pauseMenu.Initialize(_playerInputs);
     }
 }

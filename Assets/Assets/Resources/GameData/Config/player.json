@@ -19,7 +19,7 @@
 
     "combat": {
         "attackSpeed": 1.0,
-        "criticalChance": 0.05,
+        "criticalChance": 0.75,
         "criticalDamage": 1.5
     },
 

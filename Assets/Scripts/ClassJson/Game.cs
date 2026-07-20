@@ -12,4 +12,5 @@ public class GameConfig
     public string enemies;
     public string stats;
     public string spawners;
+    public string localization;
 }

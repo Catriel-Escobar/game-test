@@ -11,6 +11,7 @@ public class ConfigBoostrap
    public ProgressionConfig ProgressionConfig;
    public PlayerConfig PlayerConfig;
    public SpawnersConfig SpawnersConfig;
+   public LocalizationConfig LocalizationConfig;
   public void Initialize()
 {
         Current = this;
@@ -30,6 +31,8 @@ public class ConfigBoostrap
     ItemsConfig = LoadConfig<ItemsConfig>(gameConfig.items);
     EnemiesConfig  = LoadConfig<EnemiesConfig>(gameConfig.enemies);
     SpawnersConfig = LoadConfig<SpawnersConfig>(gameConfig.spawners);
+    LocalizationConfig = LoadConfig<LocalizationConfig>(gameConfig.localization);
+    LocalizationConfig.BuildLookup();
     Debug.Log($"GameConfig:\n{JsonUtility.ToJson(gameConfig, true)}");
     Debug.Log($"PlayerConfig:\n{JsonUtility.ToJson(PlayerConfig, true)}");
     Debug.Log($"AttackConfig:\n{JsonUtility.ToJson(AttackConfig, true)}");
