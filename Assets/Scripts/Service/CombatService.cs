@@ -15,15 +15,22 @@ public class CombatService
             ? target.CombatStats.PhysicalDefense
             : target.CombatStats.MagicDefense;
 
-        int damage = Mathf.Max(
+        int baseDamage = Mathf.Max(
             1,
             Mathf.RoundToInt(attackPower * attack.damageMultiplier) - defense);
+
+        float critChance = attacker.CombatStats.CriticalChance;
+        bool isCritical = Random.value < critChance;
+        int finalDamage = isCritical
+            ? Mathf.RoundToInt(baseDamage * attacker.CombatStats.CriticalDamage)
+            : baseDamage;
 
         target.TakeDamage(new DamageData
         {
             BaseDamage = attackPower,
-            FinalDamage = damage,
+            FinalDamage = finalDamage,
             DamageType = attack.damageType,
+            IsCritical = isCritical,
             Source = attacker
         });
     }
