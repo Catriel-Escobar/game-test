@@ -22,5 +22,13 @@ public class GameBootstrap : MonoBehaviour
         GameObject pauseMenuObj = new GameObject("PauseMenu");
         PauseMenu pauseMenu = pauseMenuObj.AddComponent<PauseMenu>();
         pauseMenu.Initialize(_playerInputs);
+
+        if (FindObjectOfType<AudioManager>() == null)
+        {
+            GameObject audioObj = new GameObject("AudioManager");
+            AudioManager audioManager = audioObj.AddComponent<AudioManager>();
+            AudioClip bgmClip = Resources.Load<AudioClip>("Sounds/game-sound-01");
+            audioManager.PlayBGM(bgmClip);
+        }
     }
 }

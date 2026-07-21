@@ -28,7 +28,14 @@
         { "key": "pause.title",          "en": "PAUSE",           "es": "PAUSA" },
         { "key": "pause.resume",         "en": "Resume",          "es": "Continuar" },
         { "key": "pause.settings",       "en": "Settings",        "es": "Ajustes" },
+        { "key": "pause.sound",          "en": "Sound",           "es": "Sonido" },
         { "key": "pause.language",       "en": "EN",              "es": "ES" },
-        { "key": "pause.quit",           "en": "Quit",            "es": "Salir" }
+        { "key": "pause.quit",           "en": "Quit",            "es": "Salir" },
+
+        { "key": "sound.title",          "en": "SOUND",           "es": "SONIDO" },
+        { "key": "sound.bgm",            "en": "Music",           "es": "Musica" },
+        { "key": "sound.sfx",            "en": "Effects",         "es": "Efectos" },
+        { "key": "sound.mute",           "en": "Mute",            "es": "Silenciar" },
+        { "key": "sound.back",           "en": "Back",            "es": "Volver" }
     ]
 }

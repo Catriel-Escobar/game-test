@@ -2276,6 +2276,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1038112912}
   m_CullTransparentMesh: 1
+--- !u!1 &1107356654 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 25c1f9b4710b76f4c9f9af1182584e37, type: 3}
+  m_PrefabInstance: {fileID: 1133587739}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1133587739
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2332,6 +2337,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 25c1f9b4710b76f4c9f9af1182584e37, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1133587742}
     - targetCorrespondingSourceObject: {fileID: 2086258604275464134, guid: 25c1f9b4710b76f4c9f9af1182584e37, type: 3}
       insertIndex: -1
       addedObject: {fileID: 273540667}
@@ -2347,6 +2355,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 25c1f9b4710b76f4c9f9af1182584e37, type: 3}
   m_PrefabInstance: {fileID: 1133587739}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1133587742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1107356654}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b687d924e9dacb64faeb25127582d5b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepAudio
+  _footstepClips:
+  - {fileID: 8300000, guid: ec41949e34e39744eba84e87301c8497, type: 3}
+  - {fileID: 8300000, guid: ec41949e34e39744eba84e87301c8497, type: 3}
+  _volume: 0.5
 --- !u!1 &1164545786
 GameObject:
   m_ObjectHideFlags: 0
@@ -15989,7 +16013,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4819529380520767682, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
   m_PrefabInstance: {fileID: 3265797461889932894}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1590524958}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d6378ff5a17db9b488bb666b8acaac7c, type: 3}
@@ -16005,7 +16029,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2658647315289441057, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
   m_PrefabInstance: {fileID: 3265797461889932894}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1590524958}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e0ea8b2abb117442a6c7c377869f0ff, type: 3}
@@ -16016,7 +16040,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3161580057912674192, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
   m_PrefabInstance: {fileID: 3265797461889932894}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 1590524958}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 780716da676231d41a0b3e1dee6a491c, type: 3}
@@ -16496,6 +16520,27 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1437653366}
   m_CullTransparentMesh: 1
+--- !u!1 &1590524958 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9076419626204928424, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
+  m_PrefabInstance: {fileID: 3265797461889932894}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1590524964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590524958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b687d924e9dacb64faeb25127582d5b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepAudio
+  _footstepClips:
+  - {fileID: 8300000, guid: ec41949e34e39744eba84e87301c8497, type: 3}
+  - {fileID: 8300000, guid: ec41949e34e39744eba84e87301c8497, type: 3}
+  _volume: 0.5
 --- !u!1 &1823688464
 GameObject:
   m_ObjectHideFlags: 0
@@ -17095,6 +17140,9 @@ PrefabInstance:
       insertIndex: 0
       addedObject: {fileID: 1133587740}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 9076419626204928424, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1590524964}
     - targetCorrespondingSourceObject: {fileID: 3624111914066983723, guid: 86d47bb5e83d6374ea156f12df3a7c1a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 347765022}
