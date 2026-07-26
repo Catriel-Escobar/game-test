@@ -9,7 +9,17 @@ public class GameBootstrap : MonoBehaviour
     {
         var ConfigBoostrap = new ConfigBoostrap();
         ConfigBoostrap.Initialize();
-        _player.Initialize(ConfigBoostrap);
+
+        PlayerSaveData saveData = null;
+        CharacterData character = SelectedCharacterManager.Instance?.SelectedCharacter;
+        if (character != null)
+        {
+            SaveManager saveManager = new SaveManager();
+            GameSaveService saveService = new GameSaveService(saveManager);
+            saveData = saveService.LoadGameplay(character.id);
+        }
+
+        _player.Initialize(ConfigBoostrap, saveData);
         _playerResourcesUI.Initialize(_player);
         _playerInputs.Initialize(_player);
 
@@ -30,5 +40,9 @@ public class GameBootstrap : MonoBehaviour
             AudioClip bgmClip = Resources.Load<AudioClip>("Sounds/game-sound-01");
             audioManager.PlayBGM(bgmClip);
         }
+
+        GameObject autoSaveObj = new GameObject("AutoSaveManager");
+        AutoSaveManager autoSave = autoSaveObj.AddComponent<AutoSaveManager>();
+        autoSave.Initialize(_player);
     }
 }

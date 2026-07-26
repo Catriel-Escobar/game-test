@@ -51,4 +51,12 @@ public class PlayerStats
         Intelligence = baseStats.intelligence;
         Dexterity = baseStats.dexterity;
     }
+
+    public void SetStats(int strength, int vitality, int intelligence, int dexterity)
+    {
+        Strength = strength;
+        Vitality = vitality;
+        Intelligence = intelligence;
+        Dexterity = dexterity;
+    }
 }

@@ -6,5 +6,6 @@
     "enemies": "GameData/Config/enemies",
     "stats": "GameData/Config/stats",
     "spawners": "GameData/Config/spawners",
-    "localization": "GameData/Config/localization"
+    "localization": "GameData/Config/localization",
+    "characterClasses": "GameData/Config/character_classes"
 }

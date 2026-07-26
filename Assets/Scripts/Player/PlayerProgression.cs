@@ -30,6 +30,13 @@ public class PlayerProgression
         CurrentExperience = 0;
         MaxLevel = config.maxLevel;
     }
+
+    public void SetState(int level, double currentExperience)
+    {
+        Level = level;
+        CurrentExperience = currentExperience;
+        OnCurrentExperienceChanged?.Invoke(CurrentExperience);
+    }
     public void AddExperience(float amount)
     {
         if(Level >= MaxLevel)

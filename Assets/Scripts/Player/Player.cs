@@ -55,7 +55,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Animation = GetComponent<PlayerAnimationController>();
     }
 
-    public void Initialize(ConfigBoostrap config)
+    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null)
     {
         PlayerConfig = config.PlayerConfig;
         AttackConfig = config.AttackConfig;
@@ -63,22 +63,43 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         ProgressionConfig = config.ProgressionConfig;
         ProgressionConfig.BuildExperienceTable();
 
-
-        // asd
-        UnlockedAttackIds = new Dictionary<string, string>
-        {
-            { PlayerConfig.startingAttack, PlayerConfig.startingAttack }
-        };
-        // Dominio
         Stats = new PlayerStats();
         Stats.Initialize(PlayerConfig.baseStats);
         Progression = new PlayerProgression(Stats);
         Progression.Initialize(ProgressionConfig);
         Movement.Initialize(PlayerConfig.movement);
-        Stats.Initialize(PlayerConfig.baseStats);
-        Resources.Initialize(PlayerConfig.baseResources,this);
         Combat.Initilizate(this);
         Combat.OnAttackStateChanged += Movement.AttackStateChanged;
+
+        if (saveData != null)
+        {
+            Stats.SetStats(saveData.strength, saveData.vitality, saveData.intelligence, saveData.dexterity);
+            Progression.SetState(saveData.level, saveData.currentExperience);
+
+            UnlockedAttackIds = new Dictionary<string, string>();
+            if (saveData.unlockedAttackIds != null)
+            {
+                for (int i = 0; i < saveData.unlockedAttackIds.Length; i++)
+                {
+                    string id = saveData.unlockedAttackIds[i];
+                    UnlockedAttackIds[id] = id;
+                }
+            }
+
+            Resources.Initialize(PlayerConfig.baseResources, this);
+            Resources.SetCurrentValues(saveData.currentHp, saveData.currentMana);
+
+            transform.position = saveData.Position;
+            transform.rotation = saveData.Rotation;
+        }
+        else
+        {
+            UnlockedAttackIds = new Dictionary<string, string>
+            {
+                { PlayerConfig.startingAttack, PlayerConfig.startingAttack }
+            };
+            Resources.Initialize(PlayerConfig.baseResources, this);
+        }
     }
 
     private void Start()

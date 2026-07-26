@@ -158,6 +158,8 @@ public class PauseMenu : MonoBehaviour
 
         _soundPanel = CreateSoundPanel(panel.transform);
         _soundPanel.SetActive(false);
+
+        LoadSoundSettings();
     }
 
     private GameObject CreateSoundPanel(Transform parent)
@@ -196,6 +198,22 @@ public class PauseMenu : MonoBehaviour
         _backText = CreateButton(panel.transform, "BackBtn", OnBackClicked);
 
         return panel;
+    }
+
+    private void LoadSoundSettings()
+    {
+        float bgm = GameSettingsManager.GetBGMVolume();
+        float sfx = GameSettingsManager.GetSFXVolume();
+        bool bgmMute = GameSettingsManager.GetBGMMute();
+        bool sfxMute = GameSettingsManager.GetSFXMute();
+
+        _bgmSlider.SetValueWithoutNotify(bgm);
+        _sfxSlider.SetValueWithoutNotify(sfx);
+        _bgmMuteToggle.SetIsOnWithoutNotify(bgmMute);
+        _sfxMuteToggle.SetIsOnWithoutNotify(sfxMute);
+
+        AudioManager.Instance?.SetBGMVolume(bgmMute ? 0f : bgm);
+        AudioManager.Instance?.SetSFXVolume(sfxMute ? 0f : sfx);
     }
 
     private Slider CreateSlider(Transform parent, string name, float defaultValue, UnityEngine.Events.UnityAction<float> onValueChanged)
@@ -430,6 +448,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnBGMMuteChanged(bool isMuted)
     {
+        GameSettingsManager.SetBGMMute(isMuted);
         if (isMuted)
             AudioManager.Instance?.SetBGMVolume(0f);
         else
@@ -438,6 +457,7 @@ public class PauseMenu : MonoBehaviour
 
     private void OnSFXMuteChanged(bool isMuted)
     {
+        GameSettingsManager.SetSFXMute(isMuted);
         if (isMuted)
             AudioManager.Instance?.SetSFXVolume(0f);
         else
@@ -448,6 +468,7 @@ public class PauseMenu : MonoBehaviour
     {
         string next = _localization.CurrentLanguage == "en" ? "es" : "en";
         _localization.SetLanguage(next);
+        GameSettingsManager.SetLanguage(next);
     }
 
     private void OnQuitClicked()
