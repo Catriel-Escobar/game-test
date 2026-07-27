@@ -14,10 +14,13 @@ public class PlayerResourcesUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentExp;
     [SerializeField] private TextMeshProUGUI expToNextLevel;
     [SerializeField] private TextMeshProUGUI level;
+    [SerializeField] private TextMeshProUGUI _nameText;
 
     private double _currentExp;
     private int _level;
     private long _expToNextLevel;
+    private RectTransform _nameRect;
+    private Camera _camera;
 
 
      private void Start()
@@ -37,6 +40,23 @@ public class PlayerResourcesUI : MonoBehaviour
         UpdateMana(_player.Resources.CurrentMana,_player.Resources.MaxMana);
         UpdateLevelAndExp(_player.Progression.Level,_player.Progression.CurrentExperience,_player.Progression.ExperiencePerLevel[_player.Progression.Level+1]);
         UpdateCurrentExperience(_player.Progression.CurrentExperience);
+
+        string playerName = SelectedCharacterManager.Instance?.SelectedCharacter?.name;
+        if (_nameText != null)
+        {
+            _nameText.text = string.IsNullOrEmpty(playerName) ? "test_name" : playerName;
+            _nameRect = _nameText.GetComponent<RectTransform>();
+            _camera = Camera.main;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (_nameRect == null || _camera == null || _player == null) return;
+
+        Vector3 worldPos = _player.transform.position + Vector3.up * 2.2f;
+        Vector3 screenPos = _camera.WorldToScreenPoint(worldPos);
+        _nameRect.position = screenPos;
     }
 
 

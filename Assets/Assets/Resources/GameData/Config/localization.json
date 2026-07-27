@@ -30,12 +30,15 @@
         { "key": "pause.settings",       "en": "Settings",        "es": "Ajustes" },
         { "key": "pause.sound",          "en": "Sound",           "es": "Sonido" },
         { "key": "pause.language",       "en": "EN",              "es": "ES" },
+        { "key": "pause.menu",           "en": "Main Menu",       "es": "Menu Principal" },
         { "key": "pause.quit",           "en": "Quit",            "es": "Salir" },
 
         { "key": "sound.title",          "en": "SOUND",           "es": "SONIDO" },
         { "key": "sound.bgm",            "en": "Music",           "es": "Musica" },
         { "key": "sound.sfx",            "en": "Effects",         "es": "Efectos" },
         { "key": "sound.mute",           "en": "Mute",            "es": "Silenciar" },
+        { "key": "sound.muteBgm",        "en": "Mute Music",      "es": "Silenciar Musica" },
+        { "key": "sound.muteSfx",        "en": "Mute Effects",    "es": "Silenciar Efectos" },
         { "key": "sound.back",           "en": "Back",            "es": "Volver" },
 
         { "key": "char.title",            "en": "CHARACTER SELECTION",     "es": "SELECCION DE PERSONAJE" },

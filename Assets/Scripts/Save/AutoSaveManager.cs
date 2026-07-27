@@ -7,7 +7,7 @@ public class AutoSaveManager : MonoBehaviour
     private CharacterData _character;
     private GameSaveService _saveService;
     private float _sessionStartTime;
-    private float _autoSaveInterval = 60f;
+    private float _autoSaveInterval = 10f;
     private float _lastAutoSaveTime;
 
     public void Initialize(Player player)

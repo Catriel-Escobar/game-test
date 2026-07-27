@@ -92,9 +92,10 @@ public class PlayerResources : MonoBehaviour
     private void UpdateResourcesByLevelUp(int arg1, double arg2, long arg3)
     {
        UpdateResources(_resourcesConfigs, _stats,_statsConfig);
+       CurrentHp = MaxHp;
+       CurrentMana = MaxMana;
        OnHealthChanged.Invoke(CurrentHp,MaxHp);
        OnManaChanged.Invoke(CurrentMana,MaxMana);
-
     }
 
     // ! HELPER
