@@ -13,4 +13,5 @@ public class GameConfig
     public string stats;
     public string spawners;
     public string localization;
+    public string characterClasses;
 }

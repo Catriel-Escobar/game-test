@@ -30,12 +30,34 @@
         { "key": "pause.settings",       "en": "Settings",        "es": "Ajustes" },
         { "key": "pause.sound",          "en": "Sound",           "es": "Sonido" },
         { "key": "pause.language",       "en": "EN",              "es": "ES" },
+        { "key": "pause.menu",           "en": "Main Menu",       "es": "Menu Principal" },
         { "key": "pause.quit",           "en": "Quit",            "es": "Salir" },
 
         { "key": "sound.title",          "en": "SOUND",           "es": "SONIDO" },
         { "key": "sound.bgm",            "en": "Music",           "es": "Musica" },
         { "key": "sound.sfx",            "en": "Effects",         "es": "Efectos" },
         { "key": "sound.mute",           "en": "Mute",            "es": "Silenciar" },
-        { "key": "sound.back",           "en": "Back",            "es": "Volver" }
+        { "key": "sound.muteBgm",        "en": "Mute Music",      "es": "Silenciar Musica" },
+        { "key": "sound.muteSfx",        "en": "Mute Effects",    "es": "Silenciar Efectos" },
+        { "key": "sound.back",           "en": "Back",            "es": "Volver" },
+
+        { "key": "char.title",            "en": "CHARACTER SELECTION",     "es": "SELECCION DE PERSONAJE" },
+        { "key": "char.emptySlot",        "en": "Empty",                   "es": "Vacio" },
+        { "key": "char.newPlayer",        "en": "New Player",              "es": "Nuevo Jugador" },
+        { "key": "char.create",           "en": "Create Character",        "es": "Crear Personaje" },
+        { "key": "char.delete",           "en": "Delete",                  "es": "Eliminar" },
+        { "key": "char.play",             "en": "Play",                    "es": "Jugar" },
+        { "key": "char.cancel",           "en": "Cancel",                  "es": "Cancelar" },
+        { "key": "char.name",             "en": "Character Name",          "es": "Nombre del Personaje" },
+        { "key": "char.class",            "en": "Class",                   "es": "Clase" },
+        { "key": "char.level",            "en": "Level",                   "es": "Nivel" },
+        { "key": "char.playTime",         "en": "Play Time",               "es": "Tiempo Jugado" },
+        { "key": "char.confirmDelete",    "en": "Are you sure you want to delete", "es": "Estas seguro de que quieres eliminar" },
+        { "key": "char.invalidName",      "en": "Invalid character name",  "es": "Nombre invalido" },
+        { "key": "char.nameEmpty",        "en": "Name cannot be empty",    "es": "El nombre no puede estar vacio" },
+        { "key": "char.nameTooLong",      "en": "Name is too long",        "es": "El nombre es demasiado largo" },
+        { "key": "char.allSlotsOccupied", "en": "All slots occupied",      "es": "Todos los slots ocupados" },
+        { "key": "class.warrior",         "en": "Warrior",                 "es": "Guerrero" },
+        { "key": "class.mage",            "en": "Mage",                    "es": "Mago" }
     ]
 }

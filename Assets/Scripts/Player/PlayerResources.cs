@@ -92,9 +92,10 @@ public class PlayerResources : MonoBehaviour
     private void UpdateResourcesByLevelUp(int arg1, double arg2, long arg3)
     {
        UpdateResources(_resourcesConfigs, _stats,_statsConfig);
+       CurrentHp = MaxHp;
+       CurrentMana = MaxMana;
        OnHealthChanged.Invoke(CurrentHp,MaxHp);
        OnManaChanged.Invoke(CurrentMana,MaxMana);
-
     }
 
     // ! HELPER
@@ -102,10 +103,20 @@ public class PlayerResources : MonoBehaviour
     {
         var initHP = baseResources.health + stats.Vitality * statsConfig.vitality.healthPerPoint;
         var initMP = baseResources.mana + stats.Intelligence * statsConfig.intelligence.manaPerPoint;
-        CurrentHp = initHP;
         MaxHp = initHP;
-        CurrentMana = initMP;
         MaxMana = initMP;
+        CurrentHp = Mathf.Min(CurrentHp, MaxHp);
+        CurrentMana = Mathf.Min(CurrentMana, MaxMana);
+        if (CurrentHp <= 0) CurrentHp = MaxHp;
+        if (CurrentMana <= 0) CurrentMana = MaxMana;
+    }
+
+    public void SetCurrentValues(int hp, int mana)
+    {
+        CurrentHp = Mathf.Clamp(hp, 0, MaxHp);
+        CurrentMana = Mathf.Clamp(mana, 0, MaxMana);
+        OnHealthChanged?.Invoke(CurrentHp, MaxHp);
+        OnManaChanged?.Invoke(CurrentMana, MaxMana);
     }
 
 

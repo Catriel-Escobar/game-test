@@ -1,41 +1,46 @@
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 public class PauseMenu : MonoBehaviour
 {
-    private Canvas _canvas;
-    private CanvasGroup _canvasGroup;
+    [Header("Panels")]
+    [SerializeField] private GameObject _pausePanel;
+    [SerializeField] private GameObject _soundPanel;
+
+    [Header("Main Menu")]
+    [SerializeField] private TextMeshProUGUI _titleText;
+    [SerializeField] private TextMeshProUGUI _resumeText;
+    [SerializeField] private TextMeshProUGUI _soundText;
+    [SerializeField] private TextMeshProUGUI _languageText;
+    [SerializeField] private TextMeshProUGUI _menuText;
+    [SerializeField] private TextMeshProUGUI _quitText;
+
+    [Header("Sound Panel")]
+    [SerializeField] private TextMeshProUGUI _soundTitleText;
+    [SerializeField] private TextMeshProUGUI _bgmLabel;
+    [SerializeField] private TextMeshProUGUI _bgmMuteLabel;
+    [SerializeField] private TextMeshProUGUI _sfxLabel;
+    [SerializeField] private TextMeshProUGUI _sfxMuteLabel;
+    [SerializeField] private TextMeshProUGUI _muteLabel;
+    [SerializeField] private TextMeshProUGUI _backText;
+    [SerializeField] private Slider _bgmSlider;
+    [SerializeField] private Slider _sfxSlider;
+    [SerializeField] private Toggle _bgmMuteToggle;
+    [SerializeField] private Toggle _sfxMuteToggle;
+
+    [Header("Scene")]
+    [SerializeField] private string _menuSceneName = "MainMenu_OFF";
+
     private InputSystem_Actions _input;
     private PlayerInputs _playerInputs;
     private LocalizationConfig _localization;
-
-    private TextMeshProUGUI _titleText;
-    private TextMeshProUGUI _resumeText;
-    private TextMeshProUGUI _settingsText;
-    private TextMeshProUGUI _soundText;
-    private TextMeshProUGUI _languageText;
-    private TextMeshProUGUI _quitText;
-
-    private GameObject _mainContent;
-    private GameObject _soundPanel;
-
-    private TextMeshProUGUI _soundTitleText;
-    private TextMeshProUGUI _bgmLabel;
-    private TextMeshProUGUI _sfxLabel;
-    private TextMeshProUGUI _muteLabel;
-    private TextMeshProUGUI _backText;
-
-    private Slider _bgmSlider;
-    private Slider _sfxSlider;
-    private Toggle _bgmMuteToggle;
-    private Toggle _sfxMuteToggle;
-
+    private CanvasGroup _canvasGroup;
     private bool _isOpen;
-    private bool _isSoundOpen;
     private Coroutine _fadeCoroutine;
 
     private const float FadeDuration = 0.2f;
@@ -48,20 +53,58 @@ public class PauseMenu : MonoBehaviour
         _input.Player.Pause.performed += OnPausePerformed;
         _input.Player.Pause.Enable();
 
-        CreateUI();
-        _canvasGroup.alpha = 0f;
-        _canvasGroup.interactable = false;
-        _canvasGroup.blocksRaycasts = false;
-        _canvas.gameObject.SetActive(false);
+        _canvasGroup = GetComponent<CanvasGroup>();
+        if (_canvasGroup == null)
+            _canvasGroup = gameObject.AddComponent<CanvasGroup>();
+
+        _pausePanel.SetActive(false);
+        _soundPanel.SetActive(false);
+
+        AddButton(_resumeText, OnResumeClicked);
+        AddButton(_soundText, OnSoundClicked);
+        AddButton(_languageText, OnLanguageClicked);
+        AddButton(_menuText, OnMenuClicked);
+        AddButton(_quitText, OnQuitClicked);
+        AddButton(_backText, OnBackClicked);
+
+        if (_bgmSlider != null)
+            _bgmSlider.onValueChanged.AddListener(OnBGMVolumeChanged);
+        if (_sfxSlider != null)
+            _sfxSlider.onValueChanged.AddListener(OnSFXVolumeChanged);
+        if (_bgmMuteToggle != null)
+            _bgmMuteToggle.onValueChanged.AddListener(OnBGMMuteChanged);
+        if (_sfxMuteToggle != null)
+            _sfxMuteToggle.onValueChanged.AddListener(OnSFXMuteChanged);
+
+        LoadSoundSettings();
 
         _localization.OnLanguageChanged += UpdateTexts;
         UpdateTexts();
+    }
+
+    private void AddButton(TextMeshProUGUI text, UnityEngine.Events.UnityAction action)
+    {
+        if (text == null) return;
+        Button btn = text.GetComponent<Button>();
+        if (btn == null)
+            btn = text.gameObject.AddComponent<Button>();
+        btn.onClick.AddListener(action);
     }
 
     private void OnDisable()
     {
         _input.Player.Pause.performed -= OnPausePerformed;
         _input.Player.Pause.Disable();
+
+        if (_bgmSlider != null)
+            _bgmSlider.onValueChanged.RemoveListener(OnBGMVolumeChanged);
+        if (_sfxSlider != null)
+            _sfxSlider.onValueChanged.RemoveListener(OnSFXVolumeChanged);
+        if (_bgmMuteToggle != null)
+            _bgmMuteToggle.onValueChanged.RemoveListener(OnBGMMuteChanged);
+        if (_sfxMuteToggle != null)
+            _sfxMuteToggle.onValueChanged.RemoveListener(OnSFXMuteChanged);
+
         if (_localization != null)
             _localization.OnLanguageChanged -= UpdateTexts;
     }
@@ -81,7 +124,8 @@ public class PauseMenu : MonoBehaviour
     {
         if (_isOpen) return;
         _isOpen = true;
-        _canvas.gameObject.SetActive(true);
+        _pausePanel.SetActive(true);
+        _soundPanel.SetActive(false);
         _playerInputs.enabled = false;
         Time.timeScale = 0f;
         Fade(1f);
@@ -91,14 +135,12 @@ public class PauseMenu : MonoBehaviour
     {
         if (!_isOpen) return;
         _isOpen = false;
-        _isSoundOpen = false;
         _playerInputs.enabled = true;
         Time.timeScale = 1f;
         Fade(0f, () =>
         {
-            _canvas.gameObject.SetActive(false);
+            _pausePanel.SetActive(false);
             _soundPanel.SetActive(false);
-            _mainContent.SetActive(true);
         });
     }
 
@@ -127,266 +169,40 @@ public class PauseMenu : MonoBehaviour
         onFinished?.Invoke();
     }
 
-    private void CreateUI()
+    private void LoadSoundSettings()
     {
-        GameObject canvasObj = new GameObject("PauseMenuCanvas");
-        canvasObj.transform.SetParent(transform, false);
-        _canvas = canvasObj.AddComponent<Canvas>();
-        _canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        _canvas.sortingOrder = 100;
-        canvasObj.AddComponent<CanvasScaler>();
-        canvasObj.AddComponent<GraphicRaycaster>();
+        float bgm = GameSettingsManager.GetBGMVolume();
+        float sfx = GameSettingsManager.GetSFXVolume();
+        bool bgmMute = GameSettingsManager.GetBGMMute();
+        bool sfxMute = GameSettingsManager.GetSFXMute();
 
-        _canvasGroup = canvasObj.AddComponent<CanvasGroup>();
+        if (_bgmSlider != null) _bgmSlider.SetValueWithoutNotify(bgm);
+        if (_sfxSlider != null) _sfxSlider.SetValueWithoutNotify(sfx);
+        if (_bgmMuteToggle != null) _bgmMuteToggle.SetIsOnWithoutNotify(bgmMute);
+        if (_sfxMuteToggle != null) _sfxMuteToggle.SetIsOnWithoutNotify(sfxMute);
 
-        GameObject panel = CreatePanel(canvasObj.transform);
-        GameObject content = CreateContent(panel.transform);
-
-        _titleText = CreateText(content.transform, "Title", 48, TextAlignmentOptions.Center);
-        CreateSpacer(content.transform, 20f);
-        _resumeText = CreateButton(content.transform, "ResumeBtn", OnResumeClicked);
-        CreateSpacer(content.transform, 10f);
-        _settingsText = CreateButton(content.transform, "SettingsBtn", OnSettingsClicked);
-        CreateSpacer(content.transform, 10f);
-        _soundText = CreateButton(content.transform, "SoundBtn", OnSoundClicked);
-        CreateSpacer(content.transform, 10f);
-        _languageText = CreateButton(content.transform, "LanguageBtn", OnLanguageClicked);
-        CreateSpacer(content.transform, 10f);
-        _quitText = CreateButton(content.transform, "QuitBtn", OnQuitClicked);
-
-        _mainContent = content;
-
-        _soundPanel = CreateSoundPanel(panel.transform);
-        _soundPanel.SetActive(false);
-    }
-
-    private GameObject CreateSoundPanel(Transform parent)
-    {
-        GameObject panel = new GameObject("SoundPanel");
-        panel.transform.SetParent(parent, false);
-        RectTransform rt = panel.AddComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = Vector2.zero;
-        rt.offsetMax = Vector2.zero;
-
-        VerticalLayoutGroup layout = panel.AddComponent<VerticalLayoutGroup>();
-        layout.childAlignment = TextAnchor.MiddleCenter;
-        layout.spacing = 10f;
-        layout.childForceExpandWidth = true;
-        layout.childForceExpandHeight = false;
-        layout.padding = new RectOffset(30, 30, 30, 30);
-
-        _soundTitleText = CreateText(panel.transform, "SoundTitle", 48, TextAlignmentOptions.Center);
-        CreateSpacer(panel.transform, 20f);
-
-        _bgmLabel = CreateText(panel.transform, "BGMLabel", 24, TextAlignmentOptions.Left);
-        _bgmSlider = CreateSlider(panel.transform, "BGMSlider", 0.5f, OnBGMVolumeChanged);
-        CreateSpacer(panel.transform, 5f);
-
-        _sfxLabel = CreateText(panel.transform, "SFXLabel", 24, TextAlignmentOptions.Left);
-        _sfxSlider = CreateSlider(panel.transform, "SFXSlider", 0.7f, OnSFXVolumeChanged);
-        CreateSpacer(panel.transform, 5f);
-
-        _muteLabel = CreateText(panel.transform, "MuteLabel", 24, TextAlignmentOptions.Left);
-        _bgmMuteToggle = CreateToggle(panel.transform, "BGMMute", OnBGMMuteChanged);
-        _sfxMuteToggle = CreateToggle(panel.transform, "SFXMute", OnSFXMuteChanged);
-        CreateSpacer(panel.transform, 10f);
-
-        _backText = CreateButton(panel.transform, "BackBtn", OnBackClicked);
-
-        return panel;
-    }
-
-    private Slider CreateSlider(Transform parent, string name, float defaultValue, UnityEngine.Events.UnityAction<float> onValueChanged)
-    {
-        GameObject obj = new GameObject(name);
-        obj.transform.SetParent(parent, false);
-        RectTransform rt = obj.AddComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(300f, 30f);
-        LayoutElement le = obj.AddComponent<LayoutElement>();
-        le.preferredHeight = 30f;
-
-        Image bg = obj.AddComponent<Image>();
-        bg.color = new Color(0.15f, 0.15f, 0.15f, 0.9f);
-
-        Slider slider = obj.AddComponent<Slider>();
-        slider.minValue = 0f;
-        slider.maxValue = 1f;
-        slider.value = defaultValue;
-        slider.onValueChanged.AddListener(onValueChanged);
-
-        GameObject fillArea = new GameObject("Fill Area");
-        fillArea.transform.SetParent(obj.transform, false);
-        RectTransform fillAreaRt = fillArea.AddComponent<RectTransform>();
-        fillAreaRt.anchorMin = new Vector2(0f, 0.25f);
-        fillAreaRt.anchorMax = new Vector2(1f, 0.75f);
-        fillAreaRt.sizeDelta = Vector2.zero;
-
-        GameObject fill = new GameObject("Fill");
-        fill.transform.SetParent(fillArea.transform, false);
-        RectTransform fillRt = fill.AddComponent<RectTransform>();
-        fillRt.anchorMin = Vector2.zero;
-        fillRt.anchorMax = new Vector2(0.5f, 1f);
-        fillRt.sizeDelta = Vector2.zero;
-        Image fillImg = fill.AddComponent<Image>();
-        fillImg.color = new Color(0.4f, 0.7f, 1f, 1f);
-
-        slider.fillRect = fillRt;
-
-        GameObject handleArea = new GameObject("Handle Slide Area");
-        handleArea.transform.SetParent(obj.transform, false);
-        RectTransform handleAreaRt = handleArea.AddComponent<RectTransform>();
-        handleAreaRt.anchorMin = Vector2.zero;
-        handleAreaRt.anchorMax = Vector2.one;
-        handleAreaRt.sizeDelta = Vector2.zero;
-
-        GameObject handle = new GameObject("Handle");
-        handle.transform.SetParent(handleArea.transform, false);
-        RectTransform handleRt = handle.AddComponent<RectTransform>();
-        handleRt.sizeDelta = new Vector2(20f, 20f);
-        Image handleImg = handle.AddComponent<Image>();
-        handleImg.color = Color.white;
-
-        slider.handleRect = handleRt;
-
-        return slider;
-    }
-
-    private Toggle CreateToggle(Transform parent, string name, UnityEngine.Events.UnityAction<bool> onValueChanged)
-    {
-        GameObject obj = new GameObject(name);
-        obj.transform.SetParent(parent, false);
-        RectTransform rt = obj.AddComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(300f, 30f);
-        LayoutElement le = obj.AddComponent<LayoutElement>();
-        le.preferredHeight = 30f;
-
-        Image bg = obj.AddComponent<Image>();
-        bg.color = new Color(0.15f, 0.15f, 0.15f, 0.9f);
-
-        Toggle toggle = obj.AddComponent<Toggle>();
-        toggle.isOn = false;
-        toggle.onValueChanged.AddListener(onValueChanged);
-
-        GameObject checkmark = new GameObject("Checkmark");
-        checkmark.transform.SetParent(obj.transform, false);
-        RectTransform checkRt = checkmark.AddComponent<RectTransform>();
-        checkRt.anchorMin = new Vector2(0.1f, 0.1f);
-        checkRt.anchorMax = new Vector2(0.9f, 0.9f);
-        checkRt.sizeDelta = Vector2.zero;
-        Image checkImg = checkmark.AddComponent<Image>();
-        checkImg.color = new Color(0.4f, 0.7f, 1f, 1f);
-
-        toggle.graphic = checkImg;
-
-        return toggle;
-    }
-
-    private GameObject CreatePanel(Transform parent)
-    {
-        GameObject panel = new GameObject("Panel");
-        panel.transform.SetParent(parent, false);
-        RectTransform rt = panel.AddComponent<RectTransform>();
-        rt.anchorMin = new Vector2(0.5f, 0.5f);
-        rt.anchorMax = new Vector2(0.5f, 0.5f);
-        rt.anchoredPosition = Vector2.zero;
-        rt.sizeDelta = new Vector2(400f, 500f);
-        Image img = panel.AddComponent<Image>();
-        img.color = new Color(0f, 0f, 0f, 0.85f);
-        return panel;
-    }
-
-    private GameObject CreateContent(Transform parent)
-    {
-        GameObject content = new GameObject("Content");
-        content.transform.SetParent(parent, false);
-        RectTransform rt = content.AddComponent<RectTransform>();
-        rt.anchorMin = Vector2.zero;
-        rt.anchorMax = Vector2.one;
-        rt.offsetMin = new Vector2(30f, 30f);
-        rt.offsetMax = new Vector2(-30f, -30f);
-        VerticalLayoutGroup layout = content.AddComponent<VerticalLayoutGroup>();
-        layout.childAlignment = TextAnchor.MiddleCenter;
-        layout.spacing = 5f;
-        layout.childForceExpandWidth = true;
-        layout.childForceExpandHeight = false;
-        return content;
-    }
-
-    private TextMeshProUGUI CreateText(Transform parent, string name, float fontSize, TextAlignmentOptions alignment)
-    {
-        GameObject obj = new GameObject(name);
-        obj.transform.SetParent(parent, false);
-        RectTransform rt = obj.AddComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(300f, 60f);
-        LayoutElement le = obj.AddComponent<LayoutElement>();
-        le.preferredHeight = 60f;
-        TextMeshProUGUI tmp = obj.AddComponent<TextMeshProUGUI>();
-        tmp.fontSize = fontSize;
-        tmp.alignment = alignment;
-        tmp.fontStyle = FontStyles.Bold;
-        tmp.color = Color.white;
-        return tmp;
-    }
-
-    private TextMeshProUGUI CreateButton(Transform parent, string name, UnityEngine.Events.UnityAction onClick)
-    {
-        GameObject obj = new GameObject(name);
-        obj.transform.SetParent(parent, false);
-        RectTransform rt = obj.AddComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(300f, 55f);
-        LayoutElement le = obj.AddComponent<LayoutElement>();
-        le.preferredHeight = 55f;
-
-        Image img = obj.AddComponent<Image>();
-        img.color = new Color(0.2f, 0.2f, 0.2f, 0.9f);
-
-        Button btn = obj.AddComponent<Button>();
-        ColorBlock colors = btn.colors;
-        colors.highlightedColor = new Color(0.35f, 0.35f, 0.35f, 1f);
-        colors.pressedColor = new Color(0.15f, 0.15f, 0.15f, 1f);
-        btn.colors = colors;
-        btn.onClick.AddListener(onClick);
-
-        GameObject textObj = new GameObject("Text");
-        textObj.transform.SetParent(obj.transform, false);
-        RectTransform textRt = textObj.AddComponent<RectTransform>();
-        textRt.anchorMin = Vector2.zero;
-        textRt.anchorMax = Vector2.one;
-        textRt.sizeDelta = Vector2.zero;
-
-        TextMeshProUGUI tmp = textObj.AddComponent<TextMeshProUGUI>();
-        tmp.fontSize = 24;
-        tmp.alignment = TextAlignmentOptions.Center;
-        tmp.color = Color.white;
-
-        return tmp;
-    }
-
-    private void CreateSpacer(Transform parent, float height)
-    {
-        GameObject spacer = new GameObject("Spacer");
-        spacer.transform.SetParent(parent, false);
-        LayoutElement le = spacer.AddComponent<LayoutElement>();
-        le.preferredHeight = height;
+        AudioManager.Instance?.SetBGMVolume(bgmMute ? 0f : bgm);
+        AudioManager.Instance?.SetSFXVolume(sfxMute ? 0f : sfx);
     }
 
     private void UpdateTexts()
     {
         if (_localization == null) return;
-        _titleText.text = _localization.Get("pause.title");
-        _resumeText.text = _localization.Get("pause.resume");
-        _settingsText.text = _localization.Get("pause.settings");
-        _soundText.text = _localization.Get("pause.sound");
-        _languageText.text = $"{GetLanguageFlag()}  {_localization.Get("pause.language")}";
-        _quitText.text = _localization.Get("pause.quit");
 
-        _soundTitleText.text = _localization.Get("sound.title");
-        _bgmLabel.text = _localization.Get("sound.bgm");
-        _sfxLabel.text = _localization.Get("sound.sfx");
-        _muteLabel.text = _localization.Get("sound.mute");
-        _backText.text = _localization.Get("sound.back");
+        if (_titleText != null) _titleText.text = _localization.Get("pause.title");
+        if (_resumeText != null) _resumeText.text = _localization.Get("pause.resume");
+        if (_soundText != null) _soundText.text = _localization.Get("pause.sound");
+        if (_languageText != null) _languageText.text = $"{GetLanguageFlag()}  {_localization.Get("pause.language")}";
+        if (_menuText != null) _menuText.text = _localization.Get("pause.menu");
+        if (_quitText != null) _quitText.text = _localization.Get("pause.quit");
+
+        if (_soundTitleText != null) _soundTitleText.text = _localization.Get("sound.title");
+        if (_bgmLabel != null) _bgmLabel.text = _localization.Get("sound.bgm");
+        if (_bgmMuteLabel != null) _bgmMuteLabel.text = _localization.Get("sound.muteBgm");
+        if (_sfxLabel != null) _sfxLabel.text = _localization.Get("sound.sfx");
+        if (_sfxMuteLabel != null) _sfxMuteLabel.text = _localization.Get("sound.muteSfx");
+        if (_muteLabel != null) _muteLabel.text = _localization.Get("sound.mute");
+        if (_backText != null) _backText.text = _localization.Get("sound.back");
     }
 
     private string GetLanguageFlag()
@@ -397,57 +213,41 @@ public class PauseMenu : MonoBehaviour
         return "\U0001F310";
     }
 
-    private void OnResumeClicked() => Close();
+    // --- Button Handlers ---
 
-    private void OnSettingsClicked()
-    {
-        Debug.Log("Settings menu - proximamente");
-    }
+    private void OnResumeClicked() => Close();
 
     private void OnSoundClicked()
     {
-        _mainContent.SetActive(false);
+        _pausePanel.SetActive(false);
         _soundPanel.SetActive(true);
-        _isSoundOpen = true;
     }
 
     private void OnBackClicked()
     {
         _soundPanel.SetActive(false);
-        _mainContent.SetActive(true);
-        _isSoundOpen = false;
-    }
-
-    private void OnBGMVolumeChanged(float value)
-    {
-        AudioManager.Instance?.SetBGMVolume(value);
-    }
-
-    private void OnSFXVolumeChanged(float value)
-    {
-        AudioManager.Instance?.SetSFXVolume(value);
-    }
-
-    private void OnBGMMuteChanged(bool isMuted)
-    {
-        if (isMuted)
-            AudioManager.Instance?.SetBGMVolume(0f);
-        else
-            AudioManager.Instance?.SetBGMVolume(_bgmSlider.value);
-    }
-
-    private void OnSFXMuteChanged(bool isMuted)
-    {
-        if (isMuted)
-            AudioManager.Instance?.SetSFXVolume(0f);
-        else
-            AudioManager.Instance?.SetSFXVolume(_sfxSlider.value);
+        _pausePanel.SetActive(true);
     }
 
     private void OnLanguageClicked()
     {
         string next = _localization.CurrentLanguage == "en" ? "es" : "en";
         _localization.SetLanguage(next);
+        GameSettingsManager.SetLanguage(next);
+    }
+
+    private void OnMenuClicked()
+    {
+        CharacterData character = SelectedCharacterManager.Instance?.SelectedCharacter;
+        if (character != null && FindObjectOfType<Player>() is Player player)
+        {
+            new GameSaveService(new SaveManager()).SaveGameplay(player, character);
+        }
+
+        AudioManager.Instance?.StopBGM();
+        Time.timeScale = 1f;
+        if (_playerInputs != null) _playerInputs.enabled = true;
+        SceneManager.LoadScene(_menuSceneName);
     }
 
     private void OnQuitClicked()
@@ -457,5 +257,45 @@ public class PauseMenu : MonoBehaviour
         #else
         Application.Quit();
         #endif
+    }
+
+    // --- Sound Handlers ---
+
+    private void OnBGMVolumeChanged(float value)
+    {
+        AudioManager.Instance?.SetBGMVolume(value);
+        if (_bgmMuteToggle != null && _bgmMuteToggle.isOn)
+        {
+            _bgmMuteToggle.SetIsOnWithoutNotify(false);
+            GameSettingsManager.SetBGMMute(false);
+        }
+    }
+
+    private void OnSFXVolumeChanged(float value)
+    {
+        AudioManager.Instance?.SetSFXVolume(value);
+        if (_sfxMuteToggle != null && _sfxMuteToggle.isOn)
+        {
+            _sfxMuteToggle.SetIsOnWithoutNotify(false);
+            GameSettingsManager.SetSFXMute(false);
+        }
+    }
+
+    private void OnBGMMuteChanged(bool isMuted)
+    {
+        GameSettingsManager.SetBGMMute(isMuted);
+        if (isMuted)
+            AudioManager.Instance?.SetBGMVolume(0f);
+        else
+            AudioManager.Instance?.SetBGMVolume(_bgmSlider != null ? _bgmSlider.value : 0.5f);
+    }
+
+    private void OnSFXMuteChanged(bool isMuted)
+    {
+        GameSettingsManager.SetSFXMute(isMuted);
+        if (isMuted)
+            AudioManager.Instance?.SetSFXVolume(0f);
+        else
+            AudioManager.Instance?.SetSFXVolume(_sfxSlider != null ? _sfxSlider.value : 0.7f);
     }
 }

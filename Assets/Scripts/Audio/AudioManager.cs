@@ -21,6 +21,9 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        _bgmVolume = GameSettingsManager.GetBGMVolume();
+        _sfxVolume = GameSettingsManager.GetSFXVolume();
+
         _bgmSource = gameObject.AddComponent<AudioSource>();
         _bgmSource.loop = true;
         _bgmSource.playOnAwake = false;
@@ -49,6 +52,7 @@ public class AudioManager : MonoBehaviour
     {
         _bgmVolume = Mathf.Clamp01(volume);
         _bgmSource.volume = _bgmVolume;
+        GameSettingsManager.SetBGMVolume(_bgmVolume);
     }
 
     public void PlaySFX(AudioClip clip)
@@ -69,5 +73,6 @@ public class AudioManager : MonoBehaviour
     {
         _sfxVolume = Mathf.Clamp01(volume);
         _sfxSource.volume = _sfxVolume;
+        GameSettingsManager.SetSFXVolume(_sfxVolume);
     }
 }
