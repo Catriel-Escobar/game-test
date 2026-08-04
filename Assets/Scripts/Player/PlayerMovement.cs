@@ -25,6 +25,12 @@ public class PlayerMovement : MonoBehaviour
     private float _verticalVelocity;
     private float _normalizedSpeed;
 
+    private bool _isDashing;
+    private Vector3 _dashDirection;
+    private float _dashSpeed;
+
+    public bool IsDashing => _isDashing;
+
         private void Awake()
         {
             _ch = GetComponent<CharacterController>();
@@ -40,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     public void Move(Vector2 input, bool isWalking = false)
         {
             if(_IsAttacking) return;
+            if(_isDashing) return;
             Vector3 forward = _camera.transform.forward;
             Vector3 right = _camera.transform.right;
 
@@ -112,6 +119,39 @@ public class PlayerMovement : MonoBehaviour
         if (direction.sqrMagnitude < 0.001f)
             return;
         transform.rotation = Quaternion.LookRotation(direction);
+    }
+
+    public void BeginDash(Vector3 direction, float speed)
+    {
+        _isDashing = true;
+        _dashDirection = direction;
+        _dashDirection.y = 0f;
+        _dashDirection.Normalize();
+        _dashSpeed = speed;
+        _normalizedSpeed = 1f;
+    }
+
+    public void DashStep()
+    {
+        if (_ch.isGrounded)
+        {
+            _verticalVelocity = -2f;
+        }
+        else
+        {
+            _verticalVelocity += _gravity * Time.deltaTime;
+        }
+
+        _velocity = _dashDirection * _dashSpeed;
+        _velocity.y = _verticalVelocity;
+
+        _ch.Move(_velocity * Time.deltaTime);
+    }
+
+    public void EndDash()
+    {
+        _isDashing = false;
+        _velocity = Vector3.zero;
     }
     internal void AttackStateChanged(bool obj)
     {

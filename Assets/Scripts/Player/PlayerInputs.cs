@@ -38,6 +38,9 @@ public class PlayerInputs : MonoBehaviour
         _input.Player.Walk.canceled += OnWalk;
         _input.Player.BasicAttack.performed += playerCombat.OnBasicAttack;
         _input.Player.BasicAttack.canceled += playerCombat.OnBasicAttack;
+        _input.Player.Skill1.performed += OnSkill1;
+        _input.Player.Skill2.performed += OnSkill2;
+        _input.Player.Skill3.performed += OnSkill3;
     }
 
   
@@ -65,6 +68,10 @@ public class PlayerInputs : MonoBehaviour
             _player.Progression.AddExperience(50);
             break;
 
+        case "3":
+            _player.Skills?.DebugPrintSkills();
+            break;
+
         default:
             Debug.Log("Otro control: " + context.control.name);
             break;
@@ -79,12 +86,40 @@ public class PlayerInputs : MonoBehaviour
         _input.Player.Walk.canceled -= OnWalk;
         _input.Player.BasicAttack.performed -= playerCombat.OnBasicAttack;
         _input.Player.BasicAttack.canceled -= playerCombat.OnBasicAttack;
+        _input.Player.Skill1.performed -= OnSkill1;
+        _input.Player.Skill2.performed -= OnSkill2;
+        _input.Player.Skill3.performed -= OnSkill3;
         _input.Disable();
     }
 
     private void OnWalk(InputAction.CallbackContext context)
     {
         _isWalking = context.ReadValueAsButton();
+    }
+
+    private void OnSkill1(InputAction.CallbackContext context)
+    {
+        TryCastEquippedSkill(0);
+    }
+
+    private void OnSkill2(InputAction.CallbackContext context)
+    {
+        TryCastEquippedSkill(1);
+    }
+
+    private void OnSkill3(InputAction.CallbackContext context)
+    {
+        TryCastEquippedSkill(2);
+    }
+
+    private void TryCastEquippedSkill(int slotIndex)
+    {
+        if (_player?.Skills == null || _player.Caster == null) return;
+
+        string[] equippedIds = _player.Skills.GetEquippedSkillIds();
+        if (slotIndex >= equippedIds.Length) return;
+
+        _player.Caster.TryCastSkill(equippedIds[slotIndex]);
     }
 
     private void OnMove(InputAction.CallbackContext ctx)

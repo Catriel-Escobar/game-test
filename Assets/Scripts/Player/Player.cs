@@ -12,8 +12,13 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
     public PlayerProgression Progression { get; private set; }
     public PlayerStats Stats { get; private set; }
     public PlayerAnimationController Animation { get; private set; }
+    public PlayerSkills Skills { get; private set; }
+    public SkillCaster Caster { get; private set; }
 
     public Dictionary<string,string> UnlockedAttackIds { get; private set; }
+
+    private readonly Dictionary<string, float> _buffMultipliers = new Dictionary<string, float>();
+    private SkillUnlockService _skillUnlockService;
 
     //! CONFIGS
     public PlayerConfig PlayerConfig;
@@ -33,15 +38,44 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
 
             return new CombatStats
             {
-                PhysicalAttack = Stats.Strength * StatsConfig.strength.damagePerPoint,
-                MagicAttack = Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint,
-                PhysicalDefense = Stats.Vitality * StatsConfig.vitality.healthPerPoint,
-                MagicDefense = Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint,
-                CriticalChance = PlayerConfig.combat.criticalChance +
-                                 (Stats.Dexterity * StatsConfig.Dexterity.criticalChancePerPoint),
-                CriticalDamage = PlayerConfig.combat.criticalDamage
+                PhysicalAttack = Mathf.RoundToInt((Stats.Strength * StatsConfig.strength.damagePerPoint) * GetBuffMultiplier("physical_attack")),
+                MagicAttack = Mathf.RoundToInt((Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_attack")),
+                PhysicalDefense = Mathf.RoundToInt((Stats.Vitality * StatsConfig.vitality.healthPerPoint) * GetBuffMultiplier("physical_defense")),
+                MagicDefense = Mathf.RoundToInt((Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_defense")),
+                CriticalChance = (PlayerConfig.combat.criticalChance +
+                                 (Stats.Dexterity * StatsConfig.Dexterity.criticalChancePerPoint)) * GetBuffMultiplier("critical_chance"),
+                CriticalDamage = PlayerConfig.combat.criticalDamage * GetBuffMultiplier("critical_damage")
             };
         }
+    }
+
+    public void AddBuffMultiplier(string statId, float percent)
+    {
+        if (string.IsNullOrEmpty(statId)) return;
+
+        _buffMultipliers.TryGetValue(statId, out float current);
+        _buffMultipliers[statId] = current + percent;
+    }
+
+    public void RemoveBuffMultiplier(string statId, float percent)
+    {
+        if (string.IsNullOrEmpty(statId)) return;
+
+        if (!_buffMultipliers.TryGetValue(statId, out float current))
+            return;
+
+        current -= percent;
+        if (current <= 0.0001f)
+            _buffMultipliers.Remove(statId);
+        else
+            _buffMultipliers[statId] = current;
+    }
+
+    private float GetBuffMultiplier(string statId)
+    {
+        return _buffMultipliers.TryGetValue(statId, out float value)
+            ? 1f + value
+            : 1f;
     }
 
     private void Awake()
@@ -55,7 +89,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Animation = GetComponent<PlayerAnimationController>();
     }
 
-    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null)
+    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null, string classId = null)
     {
         PlayerConfig = config.PlayerConfig;
         AttackConfig = config.AttackConfig;
@@ -100,6 +134,21 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             };
             Resources.Initialize(PlayerConfig.baseResources, this);
         }
+
+        Skills = new PlayerSkills();
+        Skills.Initialize(classId, config.SkillsConfig, saveData?.unlockedSkillIds);
+
+        if (!string.IsNullOrEmpty(classId))
+        {
+            _skillUnlockService = new SkillUnlockService(Skills, Progression);
+            _skillUnlockService.Initialize();
+        }
+
+        Caster = GetComponent<SkillCaster>();
+        if (Caster == null)
+            Caster = gameObject.AddComponent<SkillCaster>();
+
+        Caster.Initialize(this);
     }
 
     private void Start()

@@ -19,6 +19,7 @@ public class GameSaveService
             level = 1,
             currentExperience = 0,
             unlockedAttackIds = new string[0],
+            unlockedSkillIds = new string[0],
             playTime = 0f
         };
     }
@@ -41,6 +42,7 @@ public class GameSaveService
             currentHp = player.Resources.CurrentHp,
             currentMana = player.Resources.CurrentMana,
             unlockedAttackIds = player.UnlockedAttackIds.Keys.ToArray(),
+            unlockedSkillIds = player.Skills?.UnlockedSkillIds.ToArray(),
             playTime = character.playTime
         };
 

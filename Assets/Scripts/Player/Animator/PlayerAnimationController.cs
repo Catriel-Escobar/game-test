@@ -55,7 +55,22 @@ public class PlayerAnimationController : MonoBehaviour
         }
     }
 
-   public int SelectHash(string param)
+    public void PlaySkillCast(string animationId)
+    {
+        if (string.IsNullOrEmpty(animationId)) return;
+
+        if (!_clips.ContainsKey(animationId))
+        {
+            Debug.LogWarning($"[Skills] Animación '{animationId}' no encontrada en el Animator");
+            return;
+        }
+
+        PlayUpperAnimation(
+            Animator.StringToHash(animationId),
+            Animator.StringToHash(animationId));
+    }
+
+    public int SelectHash(string param)
     {
         return param switch
         {

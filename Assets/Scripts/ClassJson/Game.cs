@@ -12,6 +12,7 @@ public class GameConfig
     public string enemies;
     public string stats;
     public string spawners;
+    public string skills;
     public string localization;
     public string characterClasses;
 }

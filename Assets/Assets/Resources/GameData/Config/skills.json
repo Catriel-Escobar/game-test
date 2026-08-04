@@ -1,0 +1,108 @@
+{
+    "skills": [
+        {
+            "id": "whirlwind",
+            "nameKey": "skill.whirlwind",
+            "descriptionKey": "skill.whirlwind.desc",
+            "classId": "warrior",
+            "requiresLevel": 3,
+            "manaCost": 15,
+            "cooldown": 8.0,
+            "castTime": 0.6,
+            "animationId": "Whirlwind",
+            "targeting": "self",
+            "effects": [
+                {
+                    "type": "damage_aoe",
+                    "damageType": 0,
+                    "damageMultiplier": 1.4,
+                    "radius": 3.0,
+                    "range": 0.0
+                },
+                {
+                    "type": "slow",
+                    "duration": 2.0,
+                    "slowPercent": 0.3,
+                    "radius": 3.0
+                }
+            ]
+        },
+        {
+            "id": "dash_strike",
+            "nameKey": "skill.dash_strike",
+            "descriptionKey": "skill.dash_strike.desc",
+            "classId": "warrior",
+            "requiresLevel": 5,
+            "manaCost": 12,
+            "cooldown": 10.0,
+            "castTime": 0.2,
+            "animationId": "Dash",
+            "targeting": "move_dir",
+            "effects": [
+                {
+                    "type": "dash",
+                    "distance": 5.0,
+                    "speed": 18.0
+                },
+                {
+                    "type": "stun",
+                    "duration": 1.0,
+                    "radius": 1.2
+                }
+            ]
+        },
+        {
+            "id": "frost_nova",
+            "nameKey": "skill.frost_nova",
+            "descriptionKey": "skill.frost_nova.desc",
+            "classId": "mage",
+            "requiresLevel": 3,
+            "manaCost": 18,
+            "cooldown": 10.0,
+            "castTime": 0.4,
+            "animationId": "CastFrostNova",
+            "targeting": "self",
+            "effects": [
+                {
+                    "type": "damage_aoe",
+                    "damageType": 1,
+                    "damageMultiplier": 1.2,
+                    "radius": 4.0,
+                    "range": 0.0
+                },
+                {
+                    "type": "slow",
+                    "duration": 3.0,
+                    "slowPercent": 0.4,
+                    "radius": 4.0
+                }
+            ]
+        },
+        {
+            "id": "meteor",
+            "nameKey": "skill.meteor",
+            "descriptionKey": "skill.meteor.desc",
+            "classId": "mage",
+            "requiresLevel": 7,
+            "manaCost": 40,
+            "cooldown": 15.0,
+            "castTime": 1.2,
+            "animationId": "CastMeteor",
+            "targeting": "mouse",
+            "effects": [
+                {
+                    "type": "damage_aoe",
+                    "damageType": 1,
+                    "damageMultiplier": 2.5,
+                    "radius": 3.5,
+                    "range": 12.0
+                },
+                {
+                    "type": "stun",
+                    "duration": 1.5,
+                    "radius": 3.5
+                }
+            ]
+        }
+    ]
+}
