@@ -3,12 +3,14 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MobResources))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(MobAnimationController))]
+[RequireComponent(typeof(MobCombat))]
 public class Mob : MonoBehaviour,ICombatEntity
 {
     private MobAI _ai;
     private MobMovement _movement;
     private MobResources _resources;
     private MobAnimationController _animation;
+    private MobCombat _combat;
     private Enemy _enemyConfig;
     private CombatStats _combatStats;
     private float _currentSpeed;
@@ -17,12 +19,18 @@ public class Mob : MonoBehaviour,ICombatEntity
 
     private const float SpeedSmoothing = 8f;
 
+    private float _baseSpeed = 3.5f;
+    private float _slowFactor = 1f;
+
     public bool IsDead { get; private set; }
+    public bool IsStunned { get; private set; }
+    public bool IsSlowed => _slowFactor < 0.999f;
 
     public CombatStats CombatStats => _combatStats ?? new CombatStats();
     public string Id => _enemyConfig != null ? _enemyConfig.id : name;
 
     public string Name => _enemyConfig != null ? _enemyConfig.id : name;
+    public MobCombat Combat => _combat;
     private ICombatEntity _lastAttacker;
     public void Initialize(MobSpawnData spawnData)
     {
@@ -31,8 +39,10 @@ public class Mob : MonoBehaviour,ICombatEntity
 
         _resources = GetComponent<MobResources>();
         _animation = GetComponent<MobAnimationController>();
+        _combat = GetComponent<MobCombat>();
         _healthMultiplier = spawnData.HealthMultiplier;
         _damageMultiplier = spawnData.DamageMultiplier;
+        _baseSpeed = agent.speed;
         Debug.Log(_resources);
         ResolveEnemyConfig(spawnData);
         _resources?.Initialize(_enemyConfig, _healthMultiplier);
@@ -138,12 +148,53 @@ public class Mob : MonoBehaviour,ICombatEntity
 
         _ai?.Tick();
 
-        float targetSpeed = _ai != null ? _ai.TargetSpeed : 0f;
+        float targetSpeed = _ai != null && !IsStunned ? _ai.TargetSpeed : 0f;
         _currentSpeed = Mathf.MoveTowards(
             _currentSpeed,
             targetSpeed,
             SpeedSmoothing * Time.deltaTime);
         _animation?.Move(_currentSpeed);
+    }
+
+    public void AddStun()
+    {
+        if (IsStunned || IsDead) return;
+        IsStunned = true;
+
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent != null) agent.isStopped = true;
+
+        Debug.Log($"[Skills] {name} stuneado");
+    }
+
+    public void RemoveStun()
+    {
+        if (!IsStunned) return;
+        IsStunned = false;
+
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent != null) agent.isStopped = false;
+
+        Debug.Log($"[Skills] {name} deja de estar stuneado");
+    }
+
+    public void AddSlow(float slowPercent)
+    {
+        _slowFactor = Mathf.Clamp01(_slowFactor * (1f - slowPercent));
+        ApplyMobSpeed();
+    }
+
+    public void RemoveSlow(float slowPercent)
+    {
+        float inverse = slowPercent >= 1f ? 1f : 1f / (1f - slowPercent);
+        _slowFactor = Mathf.Clamp01(_slowFactor * inverse);
+        ApplyMobSpeed();
+    }
+
+    private void ApplyMobSpeed()
+    {
+        NavMeshAgent agent = GetComponent<NavMeshAgent>();
+        if (agent != null) agent.speed = _baseSpeed * _slowFactor;
     }
 
     public void SetTarget(Transform target)

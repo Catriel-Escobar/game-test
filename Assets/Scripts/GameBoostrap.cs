@@ -6,6 +6,9 @@ public class GameBootstrap : MonoBehaviour
     [SerializeField] private PlayerResourcesUI _playerResourcesUI;
     [SerializeField] private PlayerInputs _playerInputs;
     [SerializeField] private PauseMenu _pauseMenu;
+    [SerializeField] private SkillHotbarUI _skillHotbar;
+    [SerializeField] private SkillUnlockNotificationUI _skillUnlockNotification;
+    [SerializeField] private SpellBookUI _spellBook;
     private void Start()
     {
         var ConfigBoostrap = new ConfigBoostrap();
@@ -20,9 +23,16 @@ public class GameBootstrap : MonoBehaviour
             saveData = saveService.LoadGameplay(character.id);
         }
 
-        _player.Initialize(ConfigBoostrap, saveData);
+        _player.Initialize(ConfigBoostrap, saveData, character?.classId);
         _playerResourcesUI.Initialize(_player);
         _playerInputs.Initialize(_player);
+
+        if (_skillHotbar != null)
+            _skillHotbar.Initialize(_player);
+        if (_skillUnlockNotification != null)
+            _skillUnlockNotification.Initialize(_player);
+        if (_spellBook != null)
+            _spellBook.Initialize(_player);
 
         if (_pauseMenu != null)
             _pauseMenu.Initialize(_playerInputs);
@@ -31,6 +41,12 @@ public class GameBootstrap : MonoBehaviour
         {
             GameObject managerObj = new GameObject("SpawnerManager");
             managerObj.AddComponent<SpawnerManager>();
+        }
+
+        if (FindObjectOfType<StatusEffectManager>() == null)
+        {
+            GameObject statusObj = new GameObject("StatusEffectManager");
+            statusObj.AddComponent<StatusEffectManager>();
         }
 
         if (FindObjectOfType<AudioManager>() == null)

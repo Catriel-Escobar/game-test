@@ -24,6 +24,7 @@ public class PlayerResourcesConfig
 {
     public int health;
     public int mana;
+    public float manaRegenPerSecond;
 }
 
 [Serializable]

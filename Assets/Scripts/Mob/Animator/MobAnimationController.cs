@@ -5,21 +5,24 @@ using UnityEngine;
 public class MobAnimationController : MonoBehaviour
 {
     private Animator animator;
-
-    // [SerializeField] private AnimationClip[] _attackClips;
-    // private int upperLayerIndex;
-    // private Coroutine upperLayerCoroutine;
-    // private Dictionary<string, AnimationClip> _clips;
+    [SerializeField] private MobCombat combat;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        // upperLayerIndex = animator.GetLayerIndex("UpperLayer");
-        // _clips = new Dictionary<string, AnimationClip>();
-        // foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
-        // {
-        //     _clips[clip.name] = clip;
-        // }
+
+        if (combat == null)
+            combat = GetComponent<MobCombat>();
+    }
+
+    public void OnAttackStart()
+    {
+        combat?.SetAttackActive(true);
+    }
+
+    public void OnAttackEnd()
+    {
+        combat?.SetAttackActive(false);
     }
 
     public void Move(float speed)

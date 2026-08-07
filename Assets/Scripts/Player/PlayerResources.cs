@@ -32,12 +32,31 @@ public class PlayerResources : MonoBehaviour
 
         player.Progression.OnLevelChanged += UpdateResourcesByLevelUp;
     }
+    private float _manaRegenAccumulator;
+
     private void Update()
     {
         if (CurrentHp <= 0)
         {
             Die();
+            return;
         }
+
+        RegenMana();
+    }
+
+    private void RegenMana()
+    {
+        float regenPerSecond = _resourcesConfigs != null ? _resourcesConfigs.manaRegenPerSecond : 0f;
+        if (regenPerSecond <= 0f || CurrentMana >= MaxMana) return;
+
+        _manaRegenAccumulator += regenPerSecond * Time.deltaTime;
+        int regen = Mathf.FloorToInt(_manaRegenAccumulator);
+        if (regen <= 0) return;
+
+        _manaRegenAccumulator -= regen;
+        CurrentMana = Mathf.Min(CurrentMana + regen, MaxMana);
+        OnManaChanged.Invoke(CurrentMana, MaxMana);
     }
     public void TakeDamage(int damage)
     {

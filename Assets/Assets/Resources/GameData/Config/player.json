@@ -8,7 +8,8 @@
 
     "baseResources": {
         "health": 100,
-        "mana": 50
+        "mana": 50,
+        "manaRegenPerSecond": 3
     },
 
     "movement": {

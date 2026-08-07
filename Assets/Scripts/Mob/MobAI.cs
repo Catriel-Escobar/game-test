@@ -47,6 +47,13 @@ public class MobAI
 
     public void Tick()
     {
+        if (_owner.IsStunned)
+        {
+            _movement.Stop();
+            TargetSpeed = 0f;
+            return;
+        }
+
         DetectAggro();
         _currentState?.Tick();
     }

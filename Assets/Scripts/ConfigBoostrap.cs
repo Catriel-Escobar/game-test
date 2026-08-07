@@ -9,8 +9,9 @@ public class ConfigBoostrap
    public ItemsConfig ItemsConfig;
    public EnemiesConfig EnemiesConfig;
    public ProgressionConfig ProgressionConfig;
-   public PlayerConfig PlayerConfig;
-   public SpawnersConfig SpawnersConfig;
+    public PlayerConfig PlayerConfig;
+    public SpawnersConfig SpawnersConfig;
+    public SkillsConfig SkillsConfig;
    public LocalizationConfig LocalizationConfig;
    public CharacterClassesConfig CharacterClassesConfig;
   public void Initialize()
@@ -32,6 +33,7 @@ public class ConfigBoostrap
     ItemsConfig = LoadConfig<ItemsConfig>(gameConfig.items);
     EnemiesConfig  = LoadConfig<EnemiesConfig>(gameConfig.enemies);
     SpawnersConfig = LoadConfig<SpawnersConfig>(gameConfig.spawners);
+    SkillsConfig = LoadConfig<SkillsConfig>(gameConfig.skills);
     LocalizationConfig = LoadConfig<LocalizationConfig>(gameConfig.localization);
     LocalizationConfig.BuildLookup();
     CharacterClassesConfig = LoadConfig<CharacterClassesConfig>(gameConfig.characterClasses);

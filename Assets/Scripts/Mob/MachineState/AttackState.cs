@@ -8,8 +8,6 @@ public class AttackState : IMobState
 
     private const float AttackCooldown = 1f;
 
-    private CombatService _combatService;
-
     public AttackState(MobAI ai)
     {
         _ai = ai;
@@ -18,7 +16,6 @@ public class AttackState : IMobState
     public void Enter()
     {
         _attackTimer = 0;
-        _combatService = new CombatService();
         _ai.TargetSpeed = 0f;
         _ai.Movement.Stop();
         FaceTarget();
@@ -64,33 +61,26 @@ public class AttackState : IMobState
 
         FaceTarget();
 
+        if (_ai.Owner.Combat.IsAttacking)
+            return;
+
         _attackTimer += Time.deltaTime;
 
         if (_attackTimer >= AttackCooldown)
         {
             _attackTimer = 0;
 
-            _ai.Animation?.PlayAttack();
-
-            ICombatEntity target =
-                _ai.Target.GetComponent<ICombatEntity>();
-
-            if (target != null)
+            _ai.Owner.Combat.TryBeginAttack(new Attack
             {
-                _combatService.Attack(
-                    _ai.Owner,
-                    target,
-                    new Attack
-                    {
-                        damageMultiplier = 1f,
-                        damageType = AttackDamageType.Physical
-                    });
-            }
+                damageMultiplier = 1f,
+                damageType = AttackDamageType.Physical
+            });
         }
     }
 
     public void Exit()
     {
+        _ai.Owner.Combat.SetAttackActive(false);
     }
 
     private void FaceTarget()

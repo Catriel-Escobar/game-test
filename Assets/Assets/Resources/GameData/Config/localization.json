@@ -58,6 +58,19 @@
         { "key": "char.nameTooLong",      "en": "Name is too long",        "es": "El nombre es demasiado largo" },
         { "key": "char.allSlotsOccupied", "en": "All slots occupied",      "es": "Todos los slots ocupados" },
         { "key": "class.warrior",         "en": "Warrior",                 "es": "Guerrero" },
-        { "key": "class.mage",            "en": "Mage",                    "es": "Mago" }
+        { "key": "class.mage",            "en": "Mage",                    "es": "Mago" },
+
+        { "key": "skill.whirlwind",       "en": "Whirlwind",               "es": "Torbellino" },
+        { "key": "skill.whirlwind.desc",  "en": "Spin dealing damage around you and slowing enemies.", "es": "Gira causando dano a tu alrededor y ralentizando enemigos." },
+        { "key": "skill.dash_strike",     "en": "Dash Strike",             "es": "Embestida" },
+        { "key": "skill.dash_strike.desc","en": "Dash forward, stunning enemies you pass through.", "es": "Embiste hacia adelante, aturdiendo a los enemigos que atraviesas." },
+        { "key": "skill.frost_nova",      "en": "Frost Nova",              "es": "Nova de Hielo" },
+        { "key": "skill.frost_nova.desc", "en": "Explode cold energy around you, damaging and slowing enemies.", "es": "Libera energia helada a tu alrededor, danando y ralentizando enemigos." },
+        { "key": "skill.meteor",          "en": "Meteor",                  "es": "Meteoro" },
+        { "key": "skill.meteor.desc",     "en": "Call down a meteor at the target area, damaging and stunning enemies.", "es": "Invoca un meteoro en el area objetivo, danando y aturdiendo enemigos." },
+
+        { "key": "skill.unlocked",         "en": "New Skill Unlocked!",     "es": "Nueva Habilidad Desbloqueada!" },
+        { "key": "spellbook.title",        "en": "Spellbook",               "es": "Libro de Hechizos" },
+        { "key": "spellbook.requiresLevel","en": "Requires Lv. {0}",        "es": "Requiere Nv. {0}" }
     ]
 }
