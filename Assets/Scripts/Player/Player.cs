@@ -103,7 +103,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Progression.Initialize(ProgressionConfig);
         Movement.Initialize(PlayerConfig.movement);
         Combat.Initilizate(this);
-        Combat.OnAttackStateChanged += Movement.AttackStateChanged;
+        Combat.OnSwingStateChanged += Movement.AttackStateChanged;
 
         if (saveData != null)
         {

@@ -3,12 +3,14 @@ using UnityEngine.AI;
 [RequireComponent(typeof(MobResources))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(MobAnimationController))]
+[RequireComponent(typeof(MobCombat))]
 public class Mob : MonoBehaviour,ICombatEntity
 {
     private MobAI _ai;
     private MobMovement _movement;
     private MobResources _resources;
     private MobAnimationController _animation;
+    private MobCombat _combat;
     private Enemy _enemyConfig;
     private CombatStats _combatStats;
     private float _currentSpeed;
@@ -28,6 +30,7 @@ public class Mob : MonoBehaviour,ICombatEntity
     public string Id => _enemyConfig != null ? _enemyConfig.id : name;
 
     public string Name => _enemyConfig != null ? _enemyConfig.id : name;
+    public MobCombat Combat => _combat;
     private ICombatEntity _lastAttacker;
     public void Initialize(MobSpawnData spawnData)
     {
@@ -36,6 +39,7 @@ public class Mob : MonoBehaviour,ICombatEntity
 
         _resources = GetComponent<MobResources>();
         _animation = GetComponent<MobAnimationController>();
+        _combat = GetComponent<MobCombat>();
         _healthMultiplier = spawnData.HealthMultiplier;
         _damageMultiplier = spawnData.DamageMultiplier;
         _baseSpeed = agent.speed;

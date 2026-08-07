@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,10 +14,9 @@ public class PlayerCombat:MonoBehaviour
     private float baseAttackSpeed;
 
     public bool IsAttacking { get; private set; }
+    public bool IsSwinging { get; private set; }
     public event Action<bool> OnAttackStateChanged;
-
-    private Coroutine _attackWindowRoutine;
-    private float _attackEndsAt;
+    public event Action<bool> OnSwingStateChanged;
 
     public Attack CurrentAttack;
 
@@ -44,26 +42,50 @@ public class PlayerCombat:MonoBehaviour
 
         Attack candidateAttack = FindAttackById("basic_attack");
         if (candidateAttack == null) return;
+
+        if (IsSwinging) return;
+
         CurrentAttack = candidateAttack;
+
         Vector3 mouseWorld = GetMouseWorldPoint();
-        if (!IsAttacking) playerMovement.FaceWorldPosition(mouseWorld);
-        
+        playerMovement.FaceWorldPosition(mouseWorld);
 
         float effectiveAttackSpeed =
             baseAttackSpeed +
             (playerStats.Dexterity *
              statsConfig.Dexterity.attackSpeedPerPoint);
 
-        float actualDuration =
-            candidateAttack.duration / effectiveAttackSpeed;
-
-        if (!TryBeginAttackWindow(actualDuration)) return;
-
         playerAnimation.AttacksMeeles(
             candidateAttack, effectiveAttackSpeed);
     }
 
+    public void BeginSwing()
+    {
+        if (IsSwinging) return;
 
+        IsSwinging = true;
+        OnSwingStateChanged?.Invoke(true);
+    }
+
+    public void EndSwing()
+    {
+        if (!IsSwinging) return;
+
+        IsSwinging = false;
+        OnSwingStateChanged?.Invoke(false);
+    }
+
+    public void SetAttackActive(bool active)
+    {
+        if (IsAttacking == active) return;
+
+        IsAttacking = active;
+
+        if (!active)
+            CurrentAttack = null;
+
+        OnAttackStateChanged?.Invoke(IsAttacking);
+    }
 
     private Attack FindAttackById(string attackId)
     {
@@ -78,50 +100,11 @@ public class PlayerCombat:MonoBehaviour
         return null;
     }
 
-
-        // Helper principal: recibe duration y gestiona el estado "atacando".
-    private bool TryBeginAttackWindow(float duration)
-    {
-        duration = Mathf.Max(0.01f, duration);
-
-        if (IsAttacking && Time.time < _attackEndsAt)
-            return false;
-
-        if (_attackWindowRoutine != null)
-            StopCoroutine(_attackWindowRoutine);
-
-        _attackWindowRoutine = StartCoroutine(AttackWindowRoutine(duration));
-        return true;
-    }
-
-    private IEnumerator AttackWindowRoutine(float duration)
-    {
-        SetAttacking(true);
-        _attackEndsAt = Time.time + duration;
-
-        yield return new WaitForSeconds(duration);
-
-        SetAttacking(false);
-        CurrentAttack = null;
-        _attackWindowRoutine = null;
-    }
-
-    private void SetAttacking(bool value)
-    {
-        if (IsAttacking == value) return;
-        IsAttacking = value;
-        OnAttackStateChanged?.Invoke(IsAttacking);
-    }
-
     private void OnDisable()
     {
-        if (_attackWindowRoutine != null)
-            StopCoroutine(_attackWindowRoutine);
-
-        _attackWindowRoutine = null;
-        SetAttacking(false);
+        EndSwing();
+        SetAttackActive(false);
     }
-
 
     private Vector3 GetMouseWorldPoint()
     {

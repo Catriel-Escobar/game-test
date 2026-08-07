@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 8936022041257791706}
   - component: {fileID: 5025056672339360949}
   - component: {fileID: 1092121149766769575}
+  - component: {fileID: 574474070708129258}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -153,6 +154,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20f22d34f910c0846bc73d06aba05294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MobAnimationController
+  combat: {fileID: 0}
+--- !u!114 &574474070708129258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 992813780956677563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2c69bad689d827449ecede287864f5e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobCombat
+  animation: {fileID: 0}
 --- !u!1 &9044643525128352139
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,10 +321,56 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 222365938836891988, guid: 36a91d8b3624ad944994068a86300fe1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8138091991596444089}
+    - targetCorrespondingSourceObject: {fileID: 222365938836891988, guid: 36a91d8b3624ad944994068a86300fe1, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 779069747279207792}
   m_SourcePrefab: {fileID: 100100000, guid: 36a91d8b3624ad944994068a86300fe1, type: 3}
 --- !u!4 &1885304907059886772 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 36a91d8b3624ad944994068a86300fe1, type: 3}
   m_PrefabInstance: {fileID: 2135633865445186911}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2212757303254545419 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 222365938836891988, guid: 36a91d8b3624ad944994068a86300fe1, type: 3}
+  m_PrefabInstance: {fileID: 2135633865445186911}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &8138091991596444089
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2212757303254545419}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0018, y: 0.01, z: 0.0035554345}
+  m_Center: {x: 0.0046366556, y: -0.008, z: 0.005}
+--- !u!114 &779069747279207792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2212757303254545419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f60718293a4b5c6d7e8f90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MobAttackHitbox
+  mobCombat: {fileID: 574474070708129258}
+  hitboxCollider: {fileID: 8138091991596444089}
