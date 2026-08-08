@@ -162,7 +162,12 @@ public class PlayerMovement : MonoBehaviour
     }
     internal void AttackStateChanged(bool obj)
     {
-       _IsAttacking = obj;
-       _normalizedSpeed = 1f;
+       SetMovementBlocked(obj);
+    }
+
+    public void SetMovementBlocked(bool blocked)
+    {
+        _IsAttacking = blocked;
+        _normalizedSpeed = 1f;
     }
 }

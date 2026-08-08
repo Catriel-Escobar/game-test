@@ -166,6 +166,8 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             Caster = gameObject.AddComponent<SkillCaster>();
 
         Caster.Initialize(this);
+        Caster.OnCastStarted += _ => Movement.SetMovementBlocked(true);
+        Caster.OnCastCompleted += _ => Movement.SetMovementBlocked(false);
     }
 
     private void Start()

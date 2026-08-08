@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +5,6 @@ using UnityEngine;
 public class PlayerAnimationController : MonoBehaviour
 {
     private Animator animator;
-
-    private int upperLayerIndex;
-    private Coroutine upperLayerCoroutine;
 
     [SerializeField] private AnimationClip[] _attackClips;
 
@@ -19,7 +15,6 @@ public class PlayerAnimationController : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        upperLayerIndex = animator.GetLayerIndex("UpperLayer");
         _clips = new Dictionary<string, AnimationClip>();
 
         foreach (AnimationClip clip in animator.runtimeAnimatorController.animationClips)
@@ -68,10 +63,10 @@ public class PlayerAnimationController : MonoBehaviour
     {
         try
         {
-                float speed = GetAnimationLength(attack.id) / attack.duration;
-                speed *= attackSpeedMultiplier;
-                animator.SetFloat(AnimationHashes.AttackSpeed, speed);
-                PlayUpperAnimation(Animator.StringToHash(attack.id),Animator.StringToHash(attack.id));
+            float speed = GetAnimationLength(attack.id) / attack.duration;
+            speed *= attackSpeedMultiplier;
+            animator.SetFloat(AnimationHashes.AttackSpeed, speed);
+            FireTrigger(Animator.StringToHash(attack.id));
         }
         catch (System.Exception ex)
         {
@@ -85,14 +80,9 @@ public class PlayerAnimationController : MonoBehaviour
         if (string.IsNullOrEmpty(animationId)) return;
 
         if (!_clips.ContainsKey(animationId))
-        {
-            Debug.LogWarning($"[Skills] Animación '{animationId}' no encontrada en el Animator");
-            return;
-        }
+            Debug.LogWarning($"[Skills] Animación '{animationId}' no encontrada en los clips del Animator (verificar nombre del clip)");
 
-        PlayUpperAnimation(
-            Animator.StringToHash(animationId),
-            Animator.StringToHash(animationId));
+        FireTrigger(Animator.StringToHash(animationId));
     }
 
     public int SelectHash(string param)
@@ -107,55 +97,16 @@ public class PlayerAnimationController : MonoBehaviour
 
 
     private float GetAnimationLength(string animationId)
-{
-    if (_clips.TryGetValue(animationId, out AnimationClip clip))
-        return clip.length;
-
-    throw new System.Exception($"Animation '{animationId}' not found.");
-}
-    private void PlayUpperAnimation(int triggerHash, int stateHash)
     {
-        // Si ya hay una animación reproduciéndose en esta capa,
-        // la cancelamos para que la nueva tenga prioridad.
-        if (upperLayerCoroutine != null)
-            StopCoroutine(upperLayerCoroutine);
+        if (_clips.TryGetValue(animationId, out AnimationClip clip))
+            return clip.length;
 
-        upperLayerCoroutine = StartCoroutine(
-            PlayUpperAnimationRoutine(triggerHash, stateHash));
+        throw new System.Exception($"Animation '{animationId}' not found.");
     }
 
-    private IEnumerator PlayUpperAnimationRoutine(int triggerHash, int stateHash)
+    private void FireTrigger(int triggerHash)
     {
-        animator.SetLayerWeight(upperLayerIndex, 1f);
-
         animator.ResetTrigger(triggerHash);
         animator.SetTrigger(triggerHash);
-
-        // Esperar un frame para que el Animator procese el trigger.
-        yield return null;
-
-        // Esperar hasta entrar al estado.
-        while (animator.GetCurrentAnimatorStateInfo(upperLayerIndex).fullPathHash != stateHash)
-        {
-            yield return null;
-        }
-
-        // Esperar hasta que termine la animación.
-        while (true)
-        {
-            AnimatorStateInfo stateInfo =
-                animator.GetCurrentAnimatorStateInfo(upperLayerIndex);
-
-            if (stateInfo.fullPathHash != stateHash)
-                break;
-
-            if (stateInfo.normalizedTime >= 1f)
-                break;
-
-            yield return null;
-        }
-
-        animator.SetLayerWeight(upperLayerIndex, 0f);
-        upperLayerCoroutine = null;
     }
 }
