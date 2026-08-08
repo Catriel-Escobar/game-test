@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _velocity;
     public Vector3 Velocity => _velocity;
     private Camera _camera;
+    private Player _player;
     private float _verticalVelocity;
     private float _normalizedSpeed;
 
@@ -35,6 +36,7 @@ public class PlayerMovement : MonoBehaviour
         {
             _ch = GetComponent<CharacterController>();
             _camera = Camera.main;
+            _player = GetComponent<Player>();
         }
     public void Initialize(PlayerMovementConfig config)
     {
@@ -104,10 +106,15 @@ public class PlayerMovement : MonoBehaviour
                 targetSpeed,
                 rate * Time.deltaTime);
             
-            _velocity = move * (isWalking ? _speed /2 : _speed);
+            _velocity = move * (isWalking ? _speed /2 : _speed) * GetSpeedMultiplier();
             _velocity.y = _verticalVelocity;
 
         _ch.Move(Velocity * Time.deltaTime);
+    }
+
+    private float GetSpeedMultiplier()
+    {
+        return _player != null ? _player.MovementSpeedMultiplier : 1f;
     }
 
 

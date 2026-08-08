@@ -6,7 +6,8 @@
             "duration": 0.8,
             "damageMultiplier": 1.0,
             "damageType": 0,
-            "range": 2.0
+            "range": 2.0,
+            "vfx": "VFX/Slash_azul"
         },
         {
             "id": "heavy_attack",

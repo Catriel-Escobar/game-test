@@ -1,15 +1,15 @@
 {
     "skills": [
         {
-            "id": "whirlwind",
-            "nameKey": "skill.whirlwind",
-            "descriptionKey": "skill.whirlwind.desc",
+            "id": "seismic_strike",
+            "nameKey": "skill.seismic_strike",
+            "descriptionKey": "skill.seismic_strike.desc",
             "classId": "warrior",
             "requiresLevel": 3,
             "manaCost": 15,
             "cooldown": 8.0,
             "castTime": 0.6,
-            "animationId": "Whirlwind",
+            "animationId": "",
             "targeting": "self",
             "effects": [
                 {
@@ -20,9 +20,8 @@
                     "range": 0.0
                 },
                 {
-                    "type": "slow",
+                    "type": "stun",
                     "duration": 2.0,
-                    "slowPercent": 0.3,
                     "radius": 3.0
                 }
             ]
@@ -48,6 +47,31 @@
                     "type": "stun",
                     "duration": 1.0,
                     "radius": 1.2
+                }
+            ]
+        },
+        {
+            "id": "bastion",
+            "nameKey": "skill.bastion",
+            "descriptionKey": "skill.bastion.desc",
+            "classId": "warrior",
+            "requiresLevel": 7,
+            "manaCost": 20,
+            "cooldown": 2.0,
+            "castTime": 0.4,
+            "animationId": "",
+            "targeting": "self",
+            "effects": [
+                {
+                    "type": "shield",
+                    "percent": 0.4,
+                    "duration": 30.0
+                },
+                {
+                    "type": "debuff",
+                    "statId": "move_speed",
+                    "percent": 0.3,
+                    "duration": 5.0
                 }
             ]
         },

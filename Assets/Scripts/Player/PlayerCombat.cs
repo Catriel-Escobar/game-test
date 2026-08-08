@@ -20,6 +20,10 @@ public class PlayerCombat:MonoBehaviour
 
     public Attack CurrentAttack;
 
+    private string _attackVfxPath;
+    private GameObject _attackVfxPrefab;
+    private GameObject _attackVfxInstance;
+
     private void Start()
     {
         playerInputs = GetComponent<PlayerInputs>();
@@ -65,6 +69,8 @@ public class PlayerCombat:MonoBehaviour
 
         IsSwinging = true;
         OnSwingStateChanged?.Invoke(true);
+
+        SpawnAttackVfx();
     }
 
     public void EndSwing()
@@ -73,6 +79,8 @@ public class PlayerCombat:MonoBehaviour
 
         IsSwinging = false;
         OnSwingStateChanged?.Invoke(false);
+
+        DespawnAttackVfx();
     }
 
     public void SetAttackActive(bool active)
@@ -85,6 +93,35 @@ public class PlayerCombat:MonoBehaviour
             CurrentAttack = null;
 
         OnAttackStateChanged?.Invoke(IsAttacking);
+    }
+
+    private void SpawnAttackVfx()
+    {
+        if (CurrentAttack == null || string.IsNullOrEmpty(CurrentAttack.vfx)) return;
+
+        if (_attackVfxPrefab == null || _attackVfxPath != CurrentAttack.vfx)
+        {
+            _attackVfxPath = CurrentAttack.vfx;
+            _attackVfxPrefab = Resources.Load<GameObject>(_attackVfxPath);
+        }
+
+        if (_attackVfxPrefab == null)
+        {
+            Debug.LogWarning($"[Combat] VFX '{CurrentAttack.vfx}' no encontrado en Resources.");
+            return;
+        }
+
+        _attackVfxInstance = Instantiate(_attackVfxPrefab, transform);
+        _attackVfxInstance.transform.localPosition =
+            new Vector3(0f, 1.2f, CurrentAttack.range * 0.5f);
+    }
+
+    private void DespawnAttackVfx()
+    {
+        if (_attackVfxInstance == null) return;
+
+        Destroy(_attackVfxInstance);
+        _attackVfxInstance = null;
     }
 
     private Attack FindAttackById(string attackId)

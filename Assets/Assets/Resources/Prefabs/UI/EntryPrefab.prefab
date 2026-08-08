@@ -576,7 +576,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Whirlwind
+  m_text: Seismic Strike
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 5559dffe49fddf747999e92c32961a5c, type: 2}
   m_sharedMaterial: {fileID: -5019894849623248937, guid: 5559dffe49fddf747999e92c32961a5c, type: 2}

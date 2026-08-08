@@ -17,6 +17,7 @@ public class Attack
     public float range;
     public int manaCost;
     public float cooldown;
+    public string vfx;
 }
 
 public enum     AttackDamageType

@@ -18,7 +18,24 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
     public Dictionary<string,string> UnlockedAttackIds { get; private set; }
 
     private readonly Dictionary<string, float> _buffMultipliers = new Dictionary<string, float>();
+    private float _damageReduction;
     private SkillUnlockService _skillUnlockService;
+
+    public event Action<Vector3> OnDamageReduced;
+
+    public float DamageReductionPercent => Mathf.Clamp01(_damageReduction);
+
+    public float MovementSpeedMultiplier => GetBuffMultiplier("move_speed");
+
+    public void AddDamageReduction(float percent)
+    {
+        _damageReduction += percent;
+    }
+
+    public void RemoveDamageReduction(float percent)
+    {
+        _damageReduction = Mathf.Max(0f, _damageReduction - percent);
+    }
 
     //! CONFIGS
     public PlayerConfig PlayerConfig;
@@ -169,7 +186,33 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             ? damageData.FinalDamage
             : damageData.BaseDamage;
 
+        if (DamageReductionPercent > 0f)
+        {
+            damage = Mathf.Max(1, Mathf.RoundToInt(damage * (1f - DamageReductionPercent)));
+            OnDamageReduced?.Invoke(GetHitPoint(damageData));
+        }
+
         Resources.TakeDamage(damage);
 
+    }
+
+    private const float ShieldRadius = 1.2f;
+
+    private Vector3 GetHitPoint(DamageData damageData)
+    {
+        if (damageData.Source is Component source)
+        {
+            Vector3 direction = transform.position - source.transform.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude < 0.001f)
+                direction = transform.forward;
+            else
+                direction.Normalize();
+
+            return transform.position + direction * ShieldRadius;
+        }
+
+        return transform.position;
     }
 }
