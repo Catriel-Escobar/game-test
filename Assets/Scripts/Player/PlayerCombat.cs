@@ -69,8 +69,6 @@ public class PlayerCombat:MonoBehaviour
 
         IsSwinging = true;
         OnSwingStateChanged?.Invoke(true);
-
-        SpawnAttackVfx();
     }
 
     public void EndSwing()
@@ -79,8 +77,6 @@ public class PlayerCombat:MonoBehaviour
 
         IsSwinging = false;
         OnSwingStateChanged?.Invoke(false);
-
-        DespawnAttackVfx();
     }
 
     public void SetAttackActive(bool active)
@@ -88,6 +84,11 @@ public class PlayerCombat:MonoBehaviour
         if (IsAttacking == active) return;
 
         IsAttacking = active;
+
+        if (active)
+            SpawnAttackVfx();
+        else
+            DespawnAttackVfx();
 
         if (!active)
             CurrentAttack = null;
