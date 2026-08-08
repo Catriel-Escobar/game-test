@@ -52,6 +52,9 @@ public class PlayerAttackHitbox : MonoBehaviour
         if (!other.TryGetComponent<ICombatEntity>(out var damageable))
             return;
 
+        if (other.TryGetComponent<Mob>(out var mob) && mob.IsDead)
+            return;
+
         Attack attack = playerCombat.CurrentAttack;
         if (attack == null || _player == null)
             return;
@@ -62,6 +65,10 @@ public class PlayerAttackHitbox : MonoBehaviour
             _player,
             damageable,
             attack);
+
+        Vector3 hitPoint = other.ClosestPoint(transform.position);
+        hitPoint += (hitPoint - transform.position).normalized * 0.1f;
+        ImpactVfxSpawner.Spawn(attack.impactVfx, hitPoint, attack.impactVfxDuration);
     }
 }
    

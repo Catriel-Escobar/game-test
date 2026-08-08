@@ -17,7 +17,8 @@
                     "damageType": 0,
                     "damageMultiplier": 1.4,
                     "radius": 3.0,
-                    "range": 0.0
+                    "range": 0.0,
+                    "impactVfx": "VFX/VFX_Impact01"
                 },
                 {
                     "type": "stun",
@@ -92,7 +93,8 @@
                     "damageType": 1,
                     "damageMultiplier": 1.2,
                     "radius": 4.0,
-                    "range": 0.0
+                    "range": 0.0,
+                    "impactVfx": "VFX/VFX_Impact01"
                 },
                 {
                     "type": "slow",
@@ -119,7 +121,8 @@
                     "damageType": 1,
                     "damageMultiplier": 2.5,
                     "radius": 3.5,
-                    "range": 12.0
+                    "range": 12.0,
+                    "impactVfx": "VFX/VFX_Impact01"
                 },
                 {
                     "type": "stun",

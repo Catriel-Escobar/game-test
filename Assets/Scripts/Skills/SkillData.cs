@@ -30,4 +30,6 @@ public class SkillEffectDefinition
     public float distance;
     public float speed;
     public float slowPercent;
+    public string impactVfx;
+    public float impactVfxDuration = 1f;
 }

@@ -18,6 +18,8 @@ public class Attack
     public int manaCost;
     public float cooldown;
     public string vfx;
+    public string impactVfx;
+    public float impactVfxDuration = 1f;
 }
 
 public enum     AttackDamageType
