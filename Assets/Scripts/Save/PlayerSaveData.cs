@@ -22,6 +22,8 @@ public class PlayerSaveData
     public int currentMana;
     public string[] unlockedAttackIds;
     public string[] unlockedSkillIds;
+    public string[] equippedItemIds;
+    public ItemStack[] inventoryItems;
     public float playTime;
 
     public Vector3 Position

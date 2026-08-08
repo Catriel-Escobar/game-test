@@ -1,14 +1,172 @@
 {
     "items": [
         {
-            "id": "iron_sword",
+            "id": "warrior_helmet_t1",
+            "displayNameKey": "item.warrior_helmet_t1",
+            "icon": "",
             "type": 0,
-            "damage": 15
+            "slot": 0,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "Casco T1",
+            "stats": { "armor": 3, "health": 10, "mana": 0, "damage": 0, "strength": 0, "vitality": 1, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_chest_t1",
+            "displayNameKey": "item.warrior_chest_t1",
+            "icon": "",
+            "type": 0,
+            "slot": 1,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "Remera T1",
+            "stats": { "armor": 5, "health": 15, "mana": 0, "damage": 0, "strength": 0, "vitality": 2, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_gloves_t1",
+            "displayNameKey": "item.warrior_gloves_t1",
+            "icon": "",
+            "type": 0,
+            "slot": 2,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "Guantes T1",
+            "stats": { "armor": 2, "health": 5, "mana": 0, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 1 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_boots_t1",
+            "displayNameKey": "item.warrior_boots_t1",
+            "icon": "",
+            "type": 0,
+            "slot": 3,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "Botas T1",
+            "stats": { "armor": 2, "health": 5, "mana": 0, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 1 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_sword_t1",
+            "displayNameKey": "item.warrior_sword_t1",
+            "icon": "",
+            "type": 0,
+            "slot": 5,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "Espada T1",
+            "stats": { "armor": 0, "health": 0, "mana": 0, "damage": 8, "strength": 1, "vitality": 0, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_helmet_t2",
+            "displayNameKey": "item.warrior_helmet_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 0,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "CascoPlate T2",
+            "stats": { "armor": 6, "health": 20, "mana": 0, "damage": 0, "strength": 0, "vitality": 2, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_chest_t2",
+            "displayNameKey": "item.warrior_chest_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 1,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "ArmaduraPlate T2",
+            "stats": { "armor": 10, "health": 30, "mana": 0, "damage": 0, "strength": 0, "vitality": 3, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_gloves_t2",
+            "displayNameKey": "item.warrior_gloves_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 2,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "GuantePlate T2",
+            "stats": { "armor": 4, "health": 10, "mana": 0, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 2 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_boots_t2",
+            "displayNameKey": "item.warrior_boots_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 3,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "BotasPlate T2",
+            "stats": { "armor": 4, "health": 10, "mana": 0, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 2 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_sword_t2",
+            "displayNameKey": "item.warrior_sword_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 5,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "EspadaPlate T2",
+            "stats": { "armor": 0, "health": 0, "mana": 0, "damage": 15, "strength": 2, "vitality": 0, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_cape_t2",
+            "displayNameKey": "item.warrior_cape_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 4,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "Capa T2",
+            "stats": { "armor": 3, "health": 0, "mana": 10, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 2 },
+            "effect": { "heal": 0, "restoreMana": 0 }
+        },
+        {
+            "id": "warrior_shield_t2",
+            "displayNameKey": "item.warrior_shield_t2",
+            "icon": "",
+            "type": 0,
+            "slot": 6,
+            "rarity": 2,
+            "levelRequirement": 5,
+            "visualKey": "EscudoPlate T2",
+            "stats": { "armor": 8, "health": 15, "mana": 0, "damage": 0, "strength": 0, "vitality": 1, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 0 }
         },
         {
             "id": "health_potion",
+            "displayNameKey": "item.potion",
+            "icon": "",
             "type": 1,
-            "heal": 100
+            "slot": 0,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "",
+            "stats": { "armor": 0, "health": 0, "mana": 0, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 100, "restoreMana": 0 }
+        },
+        {
+            "id": "mana_potion",
+            "displayNameKey": "item.manaPotion",
+            "icon": "",
+            "type": 1,
+            "slot": 0,
+            "rarity": 0,
+            "levelRequirement": 1,
+            "visualKey": "",
+            "stats": { "armor": 0, "health": 0, "mana": 0, "damage": 0, "strength": 0, "vitality": 0, "intelligence": 0, "dexterity": 0 },
+            "effect": { "heal": 0, "restoreMana": 50 }
         }
     ]
 }

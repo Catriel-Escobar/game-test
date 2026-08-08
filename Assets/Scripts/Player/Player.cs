@@ -14,6 +14,8 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
     public PlayerAnimationController Animation { get; private set; }
     public PlayerSkills Skills { get; private set; }
     public SkillCaster Caster { get; private set; }
+    public PlayerEquipment Equipment { get; private set; }
+    public PlayerInventory Inventory { get; private set; }
 
     public Dictionary<string,string> UnlockedAttackIds { get; private set; }
 
@@ -53,14 +55,20 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             if (Stats == null || StatsConfig == null || PlayerConfig == null)
                 return new CombatStats();
 
+            ItemStats equipment = Equipment != null ? Equipment.TotalStats : new ItemStats();
+            int strength = Stats.Strength + equipment.strength;
+            int vitality = Stats.Vitality + equipment.vitality;
+            int intelligence = Stats.Intelligence + equipment.intelligence;
+            int dexterity = Stats.Dexterity + equipment.dexterity;
+
             return new CombatStats
             {
-                PhysicalAttack = Mathf.RoundToInt((Stats.Strength * StatsConfig.strength.damagePerPoint) * GetBuffMultiplier("physical_attack")),
-                MagicAttack = Mathf.RoundToInt((Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_attack")),
-                PhysicalDefense = Mathf.RoundToInt((Stats.Vitality * StatsConfig.vitality.healthPerPoint) * GetBuffMultiplier("physical_defense")),
-                MagicDefense = Mathf.RoundToInt((Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_defense")),
+                PhysicalAttack = Mathf.RoundToInt((strength * StatsConfig.strength.damagePerPoint + equipment.damage) * GetBuffMultiplier("physical_attack")),
+                MagicAttack = Mathf.RoundToInt((intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_attack")),
+                PhysicalDefense = Mathf.RoundToInt((vitality * StatsConfig.vitality.healthPerPoint + equipment.armor) * GetBuffMultiplier("physical_defense")),
+                MagicDefense = Mathf.RoundToInt((intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_defense")),
                 CriticalChance = (PlayerConfig.combat.criticalChance +
-                                 (Stats.Dexterity * StatsConfig.Dexterity.criticalChancePerPoint)) * GetBuffMultiplier("critical_chance"),
+                                 (dexterity * StatsConfig.Dexterity.criticalChancePerPoint)) * GetBuffMultiplier("critical_chance"),
                 CriticalDamage = PlayerConfig.combat.criticalDamage * GetBuffMultiplier("critical_damage")
             };
         }
@@ -152,6 +160,16 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             Resources.Initialize(PlayerConfig.baseResources, this);
         }
 
+        Equipment = GetComponent<PlayerEquipment>();
+        if (Equipment == null)
+            Equipment = gameObject.AddComponent<PlayerEquipment>();
+        Equipment.Initialize(this, config.ItemsConfig, saveData?.equippedItemIds);
+
+        Inventory = GetComponent<PlayerInventory>();
+        if (Inventory == null)
+            Inventory = gameObject.AddComponent<PlayerInventory>();
+        RestoreInventory(saveData?.inventoryItems);
+
         Skills = new PlayerSkills();
         Skills.Initialize(classId, config.SkillsConfig, saveData?.unlockedSkillIds);
 
@@ -168,6 +186,18 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Caster.Initialize(this);
         Caster.OnCastStarted += _ => Movement.SetMovementBlocked(true);
         Caster.OnCastCompleted += _ => Movement.SetMovementBlocked(false);
+    }
+
+    private void RestoreInventory(ItemStack[] stacks)
+    {
+        if (Inventory == null || stacks == null) return;
+
+        for (int i = 0; i < stacks.Length; i++)
+        {
+            ItemStack stack = stacks[i];
+            if (stack == null || string.IsNullOrEmpty(stack.itemId) || stack.count <= 0) continue;
+            Inventory.AddItem(stack.itemId, stack.count);
+        }
     }
 
     private void Start()

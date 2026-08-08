@@ -20,6 +20,8 @@ public class GameSaveService
             currentExperience = 0,
             unlockedAttackIds = new string[0],
             unlockedSkillIds = new string[0],
+            equippedItemIds = new string[0],
+            inventoryItems = new ItemStack[0],
             playTime = 0f
         };
     }
@@ -43,6 +45,8 @@ public class GameSaveService
             currentMana = player.Resources.CurrentMana,
             unlockedAttackIds = player.UnlockedAttackIds.Keys.ToArray(),
             unlockedSkillIds = player.Skills?.UnlockedSkillIds.ToArray(),
+            equippedItemIds = player.Equipment?.GetEquippedIds(),
+            inventoryItems = player.Inventory?.Stacks == null ? null : player.Inventory.Stacks.ToArray(),
             playTime = character.playTime
         };
 

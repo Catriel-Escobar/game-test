@@ -25,6 +25,7 @@ public class PlayerResources : MonoBehaviour
     private StatsConfig _statsConfig;
     internal void Initialize(PlayerResourcesConfig baseResources,Player player)
     {
+        _player = player;
         _resourcesConfigs = baseResources;
         _statsConfig = player.StatsConfig;
         _stats = player.Stats;
@@ -101,6 +102,12 @@ public class PlayerResources : MonoBehaviour
         OnManaChanged.Invoke(CurrentMana,MaxMana);
     }
 
+    public void RestoreMana(int amount)
+    {
+        CurrentMana = Mathf.Min(CurrentMana + amount, MaxMana);
+        OnManaChanged.Invoke(CurrentMana, MaxMana);
+    }
+
 
     private void Die()
     {
@@ -120,8 +127,16 @@ public class PlayerResources : MonoBehaviour
     // ! HELPER
     private void UpdateResources(PlayerResourcesConfig baseResources, PlayerStats stats,StatsConfig statsConfig)
     {
-        var initHP = baseResources.health + stats.Vitality * statsConfig.vitality.healthPerPoint;
-        var initMP = baseResources.mana + stats.Intelligence * statsConfig.intelligence.manaPerPoint;
+        ItemStats equipment = _player != null && _player.Equipment != null
+            ? _player.Equipment.TotalStats
+            : new ItemStats();
+
+        var initHP = baseResources.health
+            + (stats.Vitality + equipment.vitality) * statsConfig.vitality.healthPerPoint
+            + equipment.health;
+        var initMP = baseResources.mana
+            + (stats.Intelligence + equipment.intelligence) * statsConfig.intelligence.manaPerPoint
+            + equipment.mana;
         MaxHp = initHP;
         MaxMana = initMP;
         CurrentHp = Mathf.Min(CurrentHp, MaxHp);
@@ -134,6 +149,13 @@ public class PlayerResources : MonoBehaviour
     {
         CurrentHp = Mathf.Clamp(hp, 0, MaxHp);
         CurrentMana = Mathf.Clamp(mana, 0, MaxMana);
+        OnHealthChanged?.Invoke(CurrentHp, MaxHp);
+        OnManaChanged?.Invoke(CurrentMana, MaxMana);
+    }
+
+    public void RefreshMaxResources()
+    {
+        UpdateResources(_resourcesConfigs, _stats, _statsConfig);
         OnHealthChanged?.Invoke(CurrentHp, MaxHp);
         OnManaChanged?.Invoke(CurrentMana, MaxMana);
     }
