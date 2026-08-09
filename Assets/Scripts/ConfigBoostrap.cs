@@ -13,7 +13,9 @@ public class ConfigBoostrap
     public SpawnersConfig SpawnersConfig;
     public SkillsConfig SkillsConfig;
    public LocalizationConfig LocalizationConfig;
-   public CharacterClassesConfig CharacterClassesConfig;
+    public CharacterClassesConfig CharacterClassesConfig;
+    public AffixesConfig AffixesConfig;
+    public DropConfig DropConfig;
   public void Initialize()
 {
         Current = this;
@@ -37,6 +39,8 @@ public class ConfigBoostrap
     LocalizationConfig = LoadConfig<LocalizationConfig>(gameConfig.localization);
     LocalizationConfig.BuildLookup();
     CharacterClassesConfig = LoadConfig<CharacterClassesConfig>(gameConfig.characterClasses);
+    AffixesConfig = LoadConfig<AffixesConfig>(gameConfig.affixes);
+    DropConfig = LoadConfig<DropConfig>(gameConfig.drops);
     Debug.Log($"GameConfig:\n{JsonUtility.ToJson(gameConfig, true)}");
     Debug.Log($"PlayerConfig:\n{JsonUtility.ToJson(PlayerConfig, true)}");
     Debug.Log($"AttackConfig:\n{JsonUtility.ToJson(AttackConfig, true)}");

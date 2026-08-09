@@ -163,7 +163,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Equipment = GetComponent<PlayerEquipment>();
         if (Equipment == null)
             Equipment = gameObject.AddComponent<PlayerEquipment>();
-        Equipment.Initialize(this, config.ItemsConfig, saveData?.equippedItemIds);
+        Equipment.Initialize(this, config.ItemsConfig, saveData?.equippedItems);
 
         Inventory = GetComponent<PlayerInventory>();
         if (Inventory == null)
@@ -196,7 +196,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         {
             ItemStack stack = stacks[i];
             if (stack == null || string.IsNullOrEmpty(stack.itemId) || stack.count <= 0) continue;
-            Inventory.AddItem(stack.itemId, stack.count);
+            Inventory.AddItem(stack.itemId, stack.count, stack.affixes, stack.instanceId);
         }
     }
 

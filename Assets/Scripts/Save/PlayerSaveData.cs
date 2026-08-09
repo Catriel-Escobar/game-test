@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 
 [Serializable]
@@ -22,16 +24,18 @@ public class PlayerSaveData
     public int currentMana;
     public string[] unlockedAttackIds;
     public string[] unlockedSkillIds;
-    public string[] equippedItemIds;
+    public Dictionary<EquipmentSlot, EquippedItemData> equippedItems;
     public ItemStack[] inventoryItems;
     public float playTime;
 
+    [JsonIgnore]
     public Vector3 Position
     {
         get => new Vector3(posX, posY, posZ);
         set { posX = value.x; posY = value.y; posZ = value.z; }
     }
 
+    [JsonIgnore]
     public Quaternion Rotation
     {
         get => new Quaternion(rotX, rotY, rotZ, rotW);

@@ -1,0 +1,14 @@
+{
+    "affixes": [
+        { "id": "strength_plus", "displayNameKey": "affix.strength_plus", "stat": "strength", "isPercent": false, "minValue": 2, "maxValue": 6 },
+        { "id": "vitality_plus", "displayNameKey": "affix.vitality_plus", "stat": "vitality", "isPercent": false, "minValue": 2, "maxValue": 6 },
+        { "id": "intelligence_plus", "displayNameKey": "affix.intelligence_plus", "stat": "intelligence", "isPercent": false, "minValue": 2, "maxValue": 6 },
+        { "id": "dexterity_plus", "displayNameKey": "affix.dexterity_plus", "stat": "dexterity", "isPercent": false, "minValue": 2, "maxValue": 6 },
+        { "id": "armor_plus", "displayNameKey": "affix.armor_plus", "stat": "armor", "isPercent": false, "minValue": 5, "maxValue": 20 },
+        { "id": "health_plus", "displayNameKey": "affix.health_plus", "stat": "health", "isPercent": false, "minValue": 15, "maxValue": 50 },
+        { "id": "mana_plus", "displayNameKey": "affix.mana_plus", "stat": "mana", "isPercent": false, "minValue": 10, "maxValue": 40 },
+        { "id": "damage_plus", "displayNameKey": "affix.damage_plus", "stat": "damage", "isPercent": false, "minValue": 3, "maxValue": 12 },
+        { "id": "armor_percent", "displayNameKey": "affix.armor_percent", "stat": "armor", "isPercent": true, "minValue": 5, "maxValue": 15 },
+        { "id": "damage_percent", "displayNameKey": "affix.damage_percent", "stat": "damage", "isPercent": true, "minValue": 5, "maxValue": 20 }
+    ]
+}

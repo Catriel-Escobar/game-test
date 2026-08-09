@@ -7,7 +7,7 @@ public class PlayerEquipment : MonoBehaviour
     private Player _player;
     private ItemsConfig _itemsConfig;
     private PlayerVisualEquipment _visual;
-    private readonly Item[] _equipped = new Item[7];
+    private readonly Dictionary<EquipmentSlot, EquippedItemData> _equipped = new Dictionary<EquipmentSlot, EquippedItemData>();
 
     public event Action OnEquipmentChanged;
 
@@ -16,23 +16,26 @@ public class PlayerEquipment : MonoBehaviour
         get
         {
             ItemStats total = new ItemStats();
-            for (int i = 0; i < _equipped.Length; i++)
+            foreach (EquippedItemData equipped in _equipped.Values)
             {
-                if (_equipped[i]?.stats == null) continue;
-                total.armor += _equipped[i].stats.armor;
-                total.health += _equipped[i].stats.health;
-                total.mana += _equipped[i].stats.mana;
-                total.damage += _equipped[i].stats.damage;
-                total.strength += _equipped[i].stats.strength;
-                total.vitality += _equipped[i].stats.vitality;
-                total.intelligence += _equipped[i].stats.intelligence;
-                total.dexterity += _equipped[i].stats.dexterity;
+                if (equipped == null) continue;
+                Item item = FindItemById(equipped.itemId);
+                if (item?.stats == null) continue;
+                ItemStats stats = AffixService.ApplyAffixes(item.stats, equipped.affixes);
+                total.armor += stats.armor;
+                total.health += stats.health;
+                total.mana += stats.mana;
+                total.damage += stats.damage;
+                total.strength += stats.strength;
+                total.vitality += stats.vitality;
+                total.intelligence += stats.intelligence;
+                total.dexterity += stats.dexterity;
             }
             return total;
         }
     }
 
-    public void Initialize(Player player, ItemsConfig itemsConfig, string[] equippedItemIds = null)
+    public void Initialize(Player player, ItemsConfig itemsConfig, Dictionary<EquipmentSlot, EquippedItemData> equippedItems = null)
     {
         _player = player;
         _itemsConfig = itemsConfig;
@@ -41,14 +44,15 @@ public class PlayerEquipment : MonoBehaviour
             _visual = gameObject.AddComponent<PlayerVisualEquipment>();
         _visual.Initialize(this);
 
-        if (equippedItemIds != null)
+        _equipped.Clear();
+        if (equippedItems != null)
         {
-            for (int i = 0; i < equippedItemIds.Length && i < _equipped.Length; i++)
+            foreach (KeyValuePair<EquipmentSlot, EquippedItemData> pair in equippedItems)
             {
-                if (string.IsNullOrEmpty(equippedItemIds[i])) continue;
-                Item item = FindItemById(equippedItemIds[i]);
-                if (item != null)
-                    _equipped[i] = item;
+                EquippedItemData data = pair.Value;
+                if (data == null || string.IsNullOrEmpty(data.itemId)) continue;
+                if (FindItemById(data.itemId) != null)
+                    _equipped[pair.Key] = data;
             }
         }
 
@@ -65,36 +69,48 @@ public class PlayerEquipment : MonoBehaviour
 
     public Item GetItemInSlot(EquipmentSlot slot)
     {
-        return _equipped[(int)slot];
+        EquippedItemData data;
+        return _equipped.TryGetValue(slot, out data) ? FindItemById(data.itemId) : null;
     }
 
-    public string[] GetEquippedIds()
+    public Dictionary<EquipmentSlot, EquippedItemData> GetEquippedData()
     {
-        string[] ids = new string[_equipped.Length];
-        for (int i = 0; i < _equipped.Length; i++)
-            ids[i] = _equipped[i]?.id ?? "";
-        return ids;
+        Dictionary<EquipmentSlot, EquippedItemData> data = new Dictionary<EquipmentSlot, EquippedItemData>();
+        foreach (KeyValuePair<EquipmentSlot, EquippedItemData> pair in _equipped)
+        {
+            EquippedItemData equipped = pair.Value;
+            data[pair.Key] = new EquippedItemData
+            {
+                itemId = equipped.itemId,
+                instanceId = equipped.instanceId,
+                affixes = CloneAffixes(equipped.affixes)
+            };
+        }
+
+        return data;
     }
 
-    public bool Equip(string itemId)
+    public bool EquipFromInventory(string instanceId)
     {
-        Item item = FindItemById(itemId);
+        if (_player?.Inventory == null) return false;
+
+        ItemStack stack = _player.Inventory.FindStackByInstanceId(instanceId);
+        if (stack == null)
+        {
+            Debug.LogWarning($"[Equipment] Stack con instanceId '{instanceId}' no encontrado en inventario.");
+            return false;
+        }
+
+        Item item = FindItemById(stack.itemId);
         if (item == null)
         {
-            Debug.LogWarning($"[Equipment] Item '{itemId}' no encontrado.");
+            Debug.LogWarning($"[Equipment] Item '{stack.itemId}' no encontrado.");
             return false;
         }
 
-        if (item.type != ItemType.Equipment)
+        if (item.Type != ItemType.Equipment)
         {
-            Debug.LogWarning($"[Equipment] '{itemId}' no es equipable.");
-            return false;
-        }
-
-        int slotIndex = (int)item.slot;
-        if (slotIndex < 0 || slotIndex >= _equipped.Length)
-        {
-            Debug.LogWarning($"[Equipment] Slot invalido para '{itemId}'.");
+            Debug.LogWarning($"[Equipment] '{stack.itemId}' no es equipable.");
             return false;
         }
 
@@ -105,21 +121,29 @@ public class PlayerEquipment : MonoBehaviour
             return false;
         }
 
-        _equipped[slotIndex] = item;
-        _visual.ApplySlot(item.slot);
+        _equipped[item.Slot] = new EquippedItemData
+        {
+            itemId = item.id,
+            instanceId = stack.instanceId,
+            affixes = CloneAffixes(stack.affixes)
+        };
+        _player.Inventory.RemoveByInstanceId(instanceId);
+        _visual.ApplySlot(item.Slot);
         OnEquipmentChanged?.Invoke();
         return true;
     }
 
     public void Unequip(EquipmentSlot slot)
     {
-        int slotIndex = (int)slot;
-        if (slotIndex < 0 || slotIndex >= _equipped.Length) return;
-        if (_equipped[slotIndex] == null) return;
+        EquippedItemData equipped;
+        if (!_equipped.TryGetValue(slot, out equipped)) return;
 
-        _equipped[slotIndex] = null;
+        _equipped.Remove(slot);
         _visual.ClearSlot(slot);
         OnEquipmentChanged?.Invoke();
+
+        if (_player?.Inventory != null)
+            _player.Inventory.AddItem(equipped.itemId, 1, equipped.affixes, equipped.instanceId);
     }
 
     public Item FindItemById(string itemId)
@@ -144,7 +168,7 @@ public class PlayerEquipment : MonoBehaviour
             return false;
         }
 
-        if (item.type != ItemType.Consumable || item.effect == null)
+        if (item.Type != ItemType.Consumable || item.effect == null)
         {
             Debug.LogWarning($"[Equipment] '{itemId}' no es consumible.");
             return false;
@@ -169,5 +193,24 @@ public class PlayerEquipment : MonoBehaviour
 
         Debug.Log($"[Equipment] Consumido '{item.id}' (heal {item.effect.heal}, mana {item.effect.restoreMana}). HP {_player.Resources.CurrentHp}/{_player.Resources.MaxHp} | MP {_player.Resources.CurrentMana}/{_player.Resources.MaxMana}");
         return true;
+    }
+
+    public ItemAffix[] GetEquippedAffixesInSlot(EquipmentSlot slot)
+    {
+        EquippedItemData equipped;
+        return _equipped.TryGetValue(slot, out equipped) ? equipped.affixes : null;
+    }
+
+    private static ItemAffix[] CloneAffixes(ItemAffix[] affixes)
+    {
+        if (affixes == null || affixes.Length == 0) return null;
+        ItemAffix[] clone = new ItemAffix[affixes.Length];
+        for (int i = 0; i < affixes.Length; i++)
+        {
+            ItemAffix a = affixes[i];
+            clone[i] = a != null ? new ItemAffix(a.stat, a.value, a.percent) : null;
+        }
+
+        return clone;
     }
 }

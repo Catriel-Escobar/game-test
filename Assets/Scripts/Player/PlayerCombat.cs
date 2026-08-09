@@ -9,6 +9,7 @@ public class PlayerCombat:MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private PlayerResources playerResources;
     [SerializeField] private PlayerMovement playerMovement;
+    private Player _player;
     private AttackConfig attackConfig;
     private StatsConfig statsConfig;
     private float baseAttackSpeed;
@@ -31,6 +32,7 @@ public class PlayerCombat:MonoBehaviour
     }
     internal void   Initilizate(Player player)
     {
+        _player = player;
         playerAnimation = player.Animation;
         playerStats = player.Stats;
         playerResources = player.Resources;
@@ -44,10 +46,14 @@ public class PlayerCombat:MonoBehaviour
     {
         if (context.phase != InputActionPhase.Performed) return;
 
+        if (TryInteractWithDrop()) return;
+
         Attack candidateAttack = FindAttackById("basic_attack");
         if (candidateAttack == null) return;
 
         if (IsSwinging) return;
+
+        playerMovement.CancelMoveTo();
 
         CurrentAttack = candidateAttack;
 
@@ -154,5 +160,26 @@ public class PlayerCombat:MonoBehaviour
             return ray.GetPoint(enter);
 
         return transform.position + transform.forward;
+    }
+
+    private bool TryInteractWithDrop()
+    {
+        if (playerMovement == null) return false;
+
+        Vector2 mousePosition = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
+        WorldDrop drop = DropRegistry.FindDropAtScreenPoint(mousePosition);
+        if (drop == null) return false;
+
+        float sqrDistance = (drop.transform.position - transform.position).sqrMagnitude;
+        if (sqrDistance <= drop.PickupRadius * drop.PickupRadius)
+        {
+            drop.TryPickup(_player);
+        }
+        else
+        {
+            playerMovement.MoveTo(drop.transform.position, drop.PickupRadius, () => drop.TryPickup(_player));
+        }
+
+        return true;
     }
 }

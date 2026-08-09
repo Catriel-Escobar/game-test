@@ -9,8 +9,12 @@ public class GameBootstrap : MonoBehaviour
     [SerializeField] private SkillHotbarUI _skillHotbar;
     [SerializeField] private SkillUnlockNotificationUI _skillUnlockNotification;
     [SerializeField] private SpellBookUI _spellBook;
+    [SerializeField] private GameObject _dropPrefab;
+    [SerializeField] private GameObject _itemNameLabelPrefab;
+    [SerializeField] private RectTransform _itemNameLabelContainer;
     private void Start()
     {
+        DropVisualConfig.Configure(_dropPrefab, _itemNameLabelPrefab, _itemNameLabelContainer);
         var ConfigBoostrap = new ConfigBoostrap();
         ConfigBoostrap.Initialize();
 

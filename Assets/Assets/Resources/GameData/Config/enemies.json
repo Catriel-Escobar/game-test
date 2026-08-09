@@ -19,6 +19,14 @@
                 "criticalDamage": 1.5
             },
             "prefabPath": "Prefabs/Mobs/Zombie",
+            "dropTable": {
+                "itemDrops": [
+                    { "itemId": "health_potion", "chance": 0.5, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "mana_potion", "chance": 0.25, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "warrior_helmet_t1", "chance": 0.12, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "warrior_chest_t1", "chance": 0.1, "minCount": 1, "maxCount": 1 }
+                ]
+            },
             "tags": ["undead", "melee", "slow"]
         },
         {
@@ -40,6 +48,15 @@
                 "criticalDamage": 1.75
             },
             "prefabPath": "Prefabs/Mobs/Skeleton",
+            "dropTable": {
+                "itemDrops": [
+                    { "itemId": "health_potion", "chance": 0.3, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "warrior_gloves_t1", "chance": 0.12, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "warrior_boots_t1", "chance": 0.12, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "warrior_sword_t1", "chance": 0.08, "minCount": 1, "maxCount": 1 },
+                    { "itemId": "warrior_helmet_t2", "chance": 0.02, "minCount": 1, "maxCount": 1 }
+                ]
+            },
             "tags": ["undead", "melee", "fast"]
         }
     ]

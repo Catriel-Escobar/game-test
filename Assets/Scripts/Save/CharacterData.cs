@@ -9,7 +9,6 @@ public class CharacterData
     public float playTime;
     public string classId;
     public string portraitId;
-    public PlayerSaveData gameplaySave;
 }
 
 [Serializable]

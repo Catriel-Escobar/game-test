@@ -19,6 +19,7 @@ public class Enemy
     public float attackRange;
     public float rotationSpeed;
     public EnemyCombatConfig combat;
+    public DropTableConfig dropTable;
     public string prefabPath;
     public List<string> tags;
 }
@@ -32,4 +33,19 @@ public class EnemyCombatConfig
     public int magicDefense;
     public float criticalChance;
     public float criticalDamage;
+}
+
+[Serializable]
+public class DropTableConfig
+{
+    public ItemDrop[] itemDrops;
+}
+
+[Serializable]
+public class ItemDrop
+{
+    public string itemId;
+    public float chance;
+    public int minCount;
+    public int maxCount;
 }

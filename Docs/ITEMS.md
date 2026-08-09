@@ -206,9 +206,10 @@ MonoBehaviour que se agrega a cualquier objeto de la escena (ej. el Player); se 
 
 ## 9. Pendiente (fase 5+)
 
-> El detalle de las fases de inventario esta en **[`Docs/INVENTORY.md`](INVENTORY.md)**: drops de mobs (fase 6), afijos/affixes (fase 7) y la UI que conecta inventario con equipment (fase 8).
+> El detalle de las fases de inventario esta en **[`Docs/INVENTORY.md`](INVENTORY.md)**: drops de mobs (fase 6), afijos/affixes (fase 7), drops en el mundo como bolsa pickup con click/espacio (fase 6b) y la UI que conecta inventario con equipment (fase 8).
 
 - **Drops de mobs**: `dropTable` en `enemies.json` + `MobDropHandler` en `Mob.HandleDeath`.
+- **Drops en el mundo**: `WorldDrop` (bolsa procedural) + `DropRegistry`; click (raycast + auto-move si esta lejos) o espacio dentro del radio (accion `Interact`).
 - **Afijos (affixes)**: `ItemAffix` + `affixes.json` + generacion aleatoria + soporte en stacks (`affixHash`).
 - **UI del inventario + equipment**: panel con slots, accion `I`, equipar/usar por click (`OnInventoryChanged` ya lista).
 - Icons de items (`Item.icon`).
