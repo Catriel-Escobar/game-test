@@ -104,6 +104,16 @@
 
         { "key": "skill.unlocked",         "en": "New Skill Unlocked!",     "es": "Nueva Habilidad Desbloqueada!" },
         { "key": "spellbook.title",        "en": "Spellbook",               "es": "Libro de Hechizos" },
-        { "key": "spellbook.requiresLevel","en": "Requires Lv. {0}",        "es": "Requiere Nv. {0}" }
+        { "key": "spellbook.requiresLevel","en": "Requires Lv. {0}",        "es": "Requiere Nv. {0}" },
+
+        { "key": "inventory.title",        "en": "Inventory",               "es": "Inventario" },
+        { "key": "inventory.equip",        "en": "Equip",                   "es": "Equipar" },
+        { "key": "inventory.use",          "en": "Use",                     "es": "Usar" },
+        { "key": "inventory.empty",        "en": "Inventory is empty",      "es": "El inventario esta vacio" },
+        { "key": "inventory.requiresLevel","en": "Requires Lv. {0}",        "es": "Requiere Nv. {0}" },
+        { "key": "equipment.title",        "en": "Equipment",               "es": "Equipo" },
+        { "key": "equipment.emptySlot",    "en": "Empty",                   "es": "Vacio" },
+        { "key": "equipment.totalStats",   "en": "Total Stats",             "es": "Stats Totales" },
+        { "key": "inventory.full",         "en": "Inventory is full",       "es": "Inventario lleno" }
     ]
 }

@@ -7,34 +7,87 @@ public class PlayerInventory : MonoBehaviour
     private readonly List<ItemStack> _stacks = new List<ItemStack>();
 
     public event Action OnInventoryChanged;
+    public event Action OnInventoryFull;
 
     public int Count => _stacks.Count;
 
+    public int Capacity { get; private set; }
+
     public IReadOnlyList<ItemStack> Stacks => _stacks;
 
-    public void AddItem(string itemId, int count = 1, ItemAffix[] affixes = null, string instanceId = null)
+    public void SetCapacity(int capacity)
     {
-        if (string.IsNullOrEmpty(itemId) || count <= 0) return;
+        Capacity = Mathf.Max(1, capacity);
+    }
+
+    public bool CanAdd(string itemId, int count, ItemAffix[] affixes = null, int freedSlots = 0)
+    {
+        if (string.IsNullOrEmpty(itemId) || count <= 0) return true;
+        if (Capacity <= 0) return true;
+
+        int maxStack = GetMaxStackSize(itemId);
+        if (maxStack > 1)
+            return CanAddStacked(itemId, count, affixes, maxStack, freedSlots);
+
+        return _stacks.Count - freedSlots + count <= Capacity;
+    }
+
+    public bool AddItem(string itemId, int count = 1, ItemAffix[] affixes = null, string instanceId = null)
+    {
+        if (string.IsNullOrEmpty(itemId) || count <= 0) return false;
 
         if (!string.IsNullOrEmpty(instanceId))
         {
+            if (_stacks.Count >= Capacity)
+            {
+                OnInventoryFull?.Invoke();
+                return false;
+            }
             _stacks.Add(new ItemStack(itemId, count, CloneAffixes(affixes), instanceId));
             OnInventoryChanged?.Invoke();
-            return;
+            return true;
         }
 
         int maxStack = GetMaxStackSize(itemId);
         if (maxStack > 1)
         {
+            if (!CanAddStacked(itemId, count, affixes, maxStack))
+            {
+                OnInventoryFull?.Invoke();
+                return false;
+            }
             AddStacked(itemId, count, affixes, maxStack);
         }
         else
         {
+            if (_stacks.Count + count > Capacity)
+            {
+                OnInventoryFull?.Invoke();
+                return false;
+            }
             for (int i = 0; i < count; i++)
                 _stacks.Add(new ItemStack(itemId, 1, CloneAffixes(affixes)));
         }
 
         OnInventoryChanged?.Invoke();
+        return true;
+    }
+
+    private bool CanAddStacked(string itemId, int count, ItemAffix[] affixes, int maxStack, int freedSlots = 0)
+    {
+        string affixKey = AffixKeyOf(affixes);
+        int remaining = count;
+
+        for (int i = 0; i < _stacks.Count && remaining > 0; i++)
+        {
+            ItemStack stack = _stacks[i];
+            if (stack.itemId != itemId || stack.GetAffixKey() != affixKey) continue;
+            int space = maxStack - stack.count;
+            if (space > 0) remaining -= Mathf.Min(space, remaining);
+        }
+
+        int newSlots = remaining > 0 ? Mathf.CeilToInt(remaining / (float)maxStack) : 0;
+        return _stacks.Count - freedSlots + newSlots <= Capacity;
     }
 
     private void AddStacked(string itemId, int count, ItemAffix[] affixes, int maxStack)

@@ -121,6 +121,20 @@ public class PlayerEquipment : MonoBehaviour
             return false;
         }
 
+        EquippedItemData previous;
+        if (_equipped.TryGetValue(item.Slot, out previous))
+        {
+            if (_player.Inventory == null || !_player.Inventory.CanAdd(previous.itemId, 1, previous.affixes, 1))
+            {
+                Debug.LogWarning($"[Equipment] Inventario lleno: no se puede intercambiar '{item.id}' por '{previous.itemId}'.");
+                return false;
+            }
+
+            _equipped.Remove(item.Slot);
+            _visual.ClearSlot(item.Slot);
+            _player.Inventory.AddItem(previous.itemId, 1, previous.affixes, previous.instanceId);
+        }
+
         _equipped[item.Slot] = new EquippedItemData
         {
             itemId = item.id,
@@ -137,6 +151,12 @@ public class PlayerEquipment : MonoBehaviour
     {
         EquippedItemData equipped;
         if (!_equipped.TryGetValue(slot, out equipped)) return;
+
+        if (_player?.Inventory != null && !_player.Inventory.CanAdd(equipped.itemId, 1, equipped.affixes))
+        {
+            Debug.LogWarning($"[Equipment] Inventario lleno: no se puede desequipar '{equipped.itemId}'.");
+            return;
+        }
 
         _equipped.Remove(slot);
         _visual.ClearSlot(slot);
@@ -182,10 +202,19 @@ public class PlayerEquipment : MonoBehaviour
             return false;
         }
 
-        if (item.effect.heal > 0)
+        bool canHeal = item.effect.heal > 0 && _player.Resources.CurrentHp < _player.Resources.MaxHp;
+        bool canRestoreMana = item.effect.restoreMana > 0 && _player.Resources.CurrentMana < _player.Resources.MaxMana;
+
+        if (!canHeal && !canRestoreMana)
+        {
+            Debug.Log($"[Equipment] Recursos al maximo, no se consume '{item.id}'. HP {_player.Resources.CurrentHp}/{_player.Resources.MaxHp} | MP {_player.Resources.CurrentMana}/{_player.Resources.MaxMana}");
+            return false;
+        }
+
+        if (canHeal)
             _player.Resources.Heal(item.effect.heal);
 
-        if (item.effect.restoreMana > 0)
+        if (canRestoreMana)
             _player.Resources.RestoreMana(item.effect.restoreMana);
 
         if (_player.Inventory != null)

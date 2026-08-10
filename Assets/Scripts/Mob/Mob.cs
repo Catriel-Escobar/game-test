@@ -44,7 +44,6 @@ public class Mob : MonoBehaviour,ICombatEntity
         _healthMultiplier = spawnData.HealthMultiplier;
         _damageMultiplier = spawnData.DamageMultiplier;
         _baseSpeed = agent.speed;
-        Debug.Log(_resources);
         ResolveEnemyConfig(spawnData);
         _resources?.Initialize(_enemyConfig, _healthMultiplier);
 

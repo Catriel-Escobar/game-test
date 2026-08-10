@@ -127,7 +127,11 @@ public class WorldDrop : MonoBehaviour
             return false;
         }
 
-        player.Inventory.AddItem(ItemId, Count, Affixes);
+        if (!player.Inventory.AddItem(ItemId, Count, Affixes))
+        {
+            Debug.Log($"[WorldDrop] Inventario lleno: no se puede recoger '{ItemId}'.");
+            return false;
+        }
         _pickedUp = true;
 
         string affixText = Affixes != null && Affixes.Length > 0 ? $" con {Affixes.Length} afijos" : "";

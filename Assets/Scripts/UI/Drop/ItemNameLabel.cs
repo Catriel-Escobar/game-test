@@ -26,12 +26,36 @@ public class ItemNameLabel : MonoBehaviour
     {
         if (_target == null) return;
 
+        if (_camera == null) _camera = Camera.main;
+        if (_camera == null) return;
+
+        RectTransform rect = transform as RectTransform;
+        if (rect == null || _text == null) return;
+
         Vector3 worldPos = _target.transform.position + _offset;
         Vector3 screenPos = _camera.WorldToScreenPoint(worldPos);
         bool behind = screenPos.z < 0f;
 
-        transform.position = screenPos;
+        if (!behind)
+        {
+            RectTransform parent = rect.parent as RectTransform;
+            if (parent != null &&
+                RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                    parent, screenPos, GetEventCamera(), out Vector2 localPoint))
+            {
+                rect.localPosition = new Vector3(localPoint.x, localPoint.y, 0f);
+            }
+        }
+
         if (_text.gameObject.activeSelf != !behind)
             _text.gameObject.SetActive(!behind);
+    }
+
+    private Camera GetEventCamera()
+    {
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null) return null;
+        if (canvas.renderMode == RenderMode.ScreenSpaceOverlay) return null;
+        return canvas.worldCamera != null ? canvas.worldCamera : _camera;
     }
 }

@@ -168,6 +168,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Inventory = GetComponent<PlayerInventory>();
         if (Inventory == null)
             Inventory = gameObject.AddComponent<PlayerInventory>();
+        Inventory.SetCapacity(PlayerConfig.inventorySlots);
         RestoreInventory(saveData?.inventoryItems);
 
         Skills = new PlayerSkills();

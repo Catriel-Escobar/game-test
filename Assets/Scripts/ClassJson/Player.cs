@@ -7,6 +7,7 @@ public class PlayerConfig
     public PlayerResourcesConfig baseResources;
     public PlayerMovementConfig movement;
     public PlayerCombatConfig combat;
+    public int inventorySlots;
     public string startingAttack;
 }
 

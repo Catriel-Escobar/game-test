@@ -147,7 +147,7 @@
         {
             "id": "health_potion",
             "displayNameKey": "item.potion",
-            "icon": "",
+            "icon": "health_potion",
             "type": "Consumable",
             "slot": "Helmet",
             "rarity": "Common",
@@ -160,7 +160,7 @@
         {
             "id": "mana_potion",
             "displayNameKey": "item.manaPotion",
-            "icon": "",
+            "icon": "mana_potion",
             "type": "Consumable",
             "slot": "Helmet",
             "rarity": "Common",

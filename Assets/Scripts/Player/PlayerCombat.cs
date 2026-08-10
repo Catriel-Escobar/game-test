@@ -46,6 +46,10 @@ public class PlayerCombat:MonoBehaviour
     {
         if (context.phase != InputActionPhase.Performed) return;
 
+        Vector2 mousePos = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
+        if (InventoryUI.IsPointerOverPanel(mousePos) || EquipmentUI.IsPointerOverPanel(mousePos))
+            return;
+
         if (TryInteractWithDrop()) return;
 
         Attack candidateAttack = FindAttackById("basic_attack");
