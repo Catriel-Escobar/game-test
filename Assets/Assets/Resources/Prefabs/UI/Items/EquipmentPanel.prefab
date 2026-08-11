@@ -92,10 +92,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EquipmentUI
   _panel: {fileID: 177151860903535333}
-  _slots: []
   _titleText: {fileID: 2275122394695903950}
   _totalStatsText: {fileID: 999425240317923874}
   _tooltip: {fileID: 6890897288251014522}
+  _helmetSlot: {fileID: 0}
+  _chestSlot: {fileID: 0}
+  _glovesSlot: {fileID: 0}
+  _bootsSlot: {fileID: 0}
+  _capeSlot: {fileID: 0}
+  _weaponSlot: {fileID: 0}
+  _offHandSlot: {fileID: 0}
 --- !u!1 &1608124795250061938
 GameObject:
   m_ObjectHideFlags: 0

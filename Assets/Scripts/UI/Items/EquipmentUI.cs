@@ -6,9 +6,17 @@ public class EquipmentUI : MonoBehaviour
 {
     [Header("Panel")]
     [SerializeField] private GameObject _panel;
-    [SerializeField] private EquipmentSlotUI[] _slots;
     [SerializeField] private TMP_Text _titleText;
     [SerializeField] private TMP_Text _totalStatsText;
+
+    [Header("Slots (cada parte del cuerpo)")]
+    [SerializeField] private EquipmentSlotUI _helmetSlot;
+    [SerializeField] private EquipmentSlotUI _chestSlot;
+    [SerializeField] private EquipmentSlotUI _glovesSlot;
+    [SerializeField] private EquipmentSlotUI _bootsSlot;
+    [SerializeField] private EquipmentSlotUI _capeSlot;
+    [SerializeField] private EquipmentSlotUI _weaponSlot;
+    [SerializeField] private EquipmentSlotUI _offHandSlot;
 
     [Header("References")]
     [SerializeField] private ItemTooltipUI _tooltip;
@@ -36,19 +44,7 @@ public class EquipmentUI : MonoBehaviour
         if (_tooltip != null)
             _tooltip.Initialize(_localization);
 
-        if (_slots != null)
-        {
-            EquipmentSlot[] values = (EquipmentSlot[])System.Enum.GetValues(typeof(EquipmentSlot));
-            for (int i = 0; i < _slots.Length; i++)
-            {
-                EquipmentSlotUI slot = _slots[i];
-                if (slot == null) continue;
-
-                EquipmentSlot enumValue = i < values.Length ? values[i] : (EquipmentSlot)i;
-                slot.Setup(enumValue, _localization, OnSlotClicked, OnSlotHovered, OnSlotExited);
-                _slotByEnum[enumValue] = slot;
-            }
-        }
+        SetupSlots();
 
         if (_panel != null)
         {
@@ -109,6 +105,24 @@ public class EquipmentUI : MonoBehaviour
     private void OnEquipmentChanged()
     {
         if (IsOpen) RefreshAll();
+    }
+
+    private void SetupSlots()
+    {
+        RegisterSlot(EquipmentSlot.Helmet, _helmetSlot);
+        RegisterSlot(EquipmentSlot.Chest, _chestSlot);
+        RegisterSlot(EquipmentSlot.Gloves, _glovesSlot);
+        RegisterSlot(EquipmentSlot.Boots, _bootsSlot);
+        RegisterSlot(EquipmentSlot.Cape, _capeSlot);
+        RegisterSlot(EquipmentSlot.Weapon, _weaponSlot);
+        RegisterSlot(EquipmentSlot.OffHand, _offHandSlot);
+    }
+
+    private void RegisterSlot(EquipmentSlot enumValue, EquipmentSlotUI slot)
+    {
+        if (slot == null) return;
+        slot.Setup(enumValue, _localization, OnSlotClicked, OnSlotHovered, OnSlotExited);
+        _slotByEnum[enumValue] = slot;
     }
 
     public void RefreshAll()
