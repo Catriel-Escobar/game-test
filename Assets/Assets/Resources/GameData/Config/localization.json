@@ -30,6 +30,8 @@
         { "key": "item.warrior_sword_t2",    "en": "Plate Sword T2",     "es": "Espada de Placas T2" },
         { "key": "item.warrior_cape_t2",     "en": "Warrior Cape T2",    "es": "Capa Guerrero T2" },
         { "key": "item.warrior_shield_t2",   "en": "Plate Shield T2",    "es": "Escudo de Placas T2" },
+        { "key": "item.mage_staff_t1",       "en": "Mage Staff T1",      "es": "Baston de Mago T1" },
+        { "key": "item.mage_book_t1",        "en": "Spellbook T1",       "es": "Libro de Hechizos T1" },
         { "key": "item.rarity.common",       "en": "Common",             "es": "Comun" },
         { "key": "item.rarity.rare",         "en": "Rare",               "es": "Raro" },
         { "key": "affix.strength_plus",      "en": "Of Strength",        "es": "De la Fuerza" },
@@ -101,6 +103,8 @@
         { "key": "skill.frost_nova.desc", "en": "Explode cold energy around you, damaging and slowing enemies.", "es": "Libera energia helada a tu alrededor, danando y ralentizando enemigos." },
         { "key": "skill.meteor",          "en": "Meteor",                  "es": "Meteoro" },
         { "key": "skill.meteor.desc",     "en": "Call down a meteor at the target area, damaging and stunning enemies.", "es": "Invoca un meteoro en el area objetivo, danando y aturdiendo enemigos." },
+        { "key": "skill.arcane_barrage",      "en": "Arcane Barrage",     "es": "Descarga Arcanica" },
+        { "key": "skill.arcane_barrage.desc", "en": "Blast the target area with concentrated arcane energy.", "es": "Explota el area objetivo con energia arcanica concentrada." },
 
         { "key": "skill.unlocked",         "en": "New Skill Unlocked!",     "es": "Nueva Habilidad Desbloqueada!" },
         { "key": "spellbook.title",        "en": "Spellbook",               "es": "Libro de Hechizos" },

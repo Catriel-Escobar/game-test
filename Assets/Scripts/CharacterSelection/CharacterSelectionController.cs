@@ -90,12 +90,10 @@ public class CharacterSelectionController : MonoBehaviour
 
     private void InitializeModals()
     {
-        CharacterClassesConfig classesConfig = ConfigBoostrap.Current.CharacterClassesConfig;
-
         if (_createModal != null)
         {
             Debug.Log("Inicializando create modal");
-            _createModal.Initialize(_service, _localization, classesConfig);
+            _createModal.Initialize(_service, _localization);
             _createModal.OnCharacterCreated += OnCharacterCreated;
         }
 

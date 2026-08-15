@@ -64,12 +64,12 @@ public class SpellBookUI : MonoBehaviour
         for (int i = entryContainer.childCount - 1; i >= 0; i--)
             Destroy(entryContainer.GetChild(i).gameObject);
 
-        SkillDefinition[] classSkills = _player.Skills.GetClassSkills();
-        for (int i = 0; i < classSkills.Length; i++)
+        SkillDefinition[] activeSkills = _player.Skills.GetActiveSkills();
+        for (int i = 0; i < activeSkills.Length; i++)
         {
             SpellBookEntryUI entry = Instantiate(entryPrefab, entryContainer);
             entry.gameObject.SetActive(true);
-            entry.Setup(classSkills[i], _player.Skills.IsUnlocked(classSkills[i].id), _localization);
+            entry.Setup(activeSkills[i], true, _localization);
         }
     }
 

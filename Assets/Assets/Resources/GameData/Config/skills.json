@@ -4,8 +4,6 @@
             "id": "seismic_strike",
             "nameKey": "skill.seismic_strike",
             "descriptionKey": "skill.seismic_strike.desc",
-            "classId": "warrior",
-            "requiresLevel": 3,
             "manaCost": 15,
             "cooldown": 8.0,
             "castTime": 0.6,
@@ -17,13 +15,23 @@
                     "damageType": 0,
                     "damageMultiplier": 1.4,
                     "radius": 3.0,
-                    "range": 0.0,
-                    "impactVfx": "VFX/VFX_Impact01"
+                    "range": 0.0
                 },
                 {
                     "type": "stun",
                     "duration": 2.0,
                     "radius": 3.0
+                }
+            ],
+            "visuals": [
+                {
+                    "type": "cast",
+                    "prefab": "VFX/VFX_Cast01"
+                },
+                {
+                    "type": "impact",
+                    "prefab": "VFX/VFX_Impact01",
+                    "anchor": "center"
                 }
             ]
         },
@@ -31,8 +39,6 @@
             "id": "dash_strike",
             "nameKey": "skill.dash_strike",
             "descriptionKey": "skill.dash_strike.desc",
-            "classId": "warrior",
-            "requiresLevel": 5,
             "manaCost": 12,
             "cooldown": 10.0,
             "castTime": 0.2,
@@ -49,14 +55,28 @@
                     "duration": 1.0,
                     "radius": 1.2
                 }
+            ],
+            "visuals": [
+                {
+                    "type": "persistent",
+                    "prefab": "VFX/VFX_DashTrail",
+                    "anchor": "player",
+                    "offset": { "y": 0.2 },
+                    "destroyAfter": 0.35
+                },
+                {
+                    "type": "impact",
+                    "trigger": "end",
+                    "prefab": "VFX/VFX_Impact01",
+                    "anchor": "center",
+                    "destroyAfter": 0.6
+                }
             ]
         },
         {
             "id": "bastion",
             "nameKey": "skill.bastion",
             "descriptionKey": "skill.bastion.desc",
-            "classId": "warrior",
-            "requiresLevel": 7,
             "manaCost": 20,
             "cooldown": 3.0,
             "castTime": 0.4,
@@ -74,14 +94,18 @@
                     "percent": 0.3,
                     "duration": 5.0
                 }
+            ],
+            "visuals": [
+                {
+                    "type": "cast",
+                    "prefab": "VFX/VFX_Cast01"
+                }
             ]
         },
         {
             "id": "frost_nova",
             "nameKey": "skill.frost_nova",
             "descriptionKey": "skill.frost_nova.desc",
-            "classId": "mage",
-            "requiresLevel": 3,
             "manaCost": 18,
             "cooldown": 10.0,
             "castTime": 0.4,
@@ -93,8 +117,7 @@
                     "damageType": 1,
                     "damageMultiplier": 1.2,
                     "radius": 4.0,
-                    "range": 0.0,
-                    "impactVfx": "VFX/VFX_Impact01"
+                    "range": 0.0
                 },
                 {
                     "type": "slow",
@@ -102,14 +125,23 @@
                     "slowPercent": 0.4,
                     "radius": 4.0
                 }
+            ],
+            "visuals": [
+                {
+                    "type": "cast",
+                    "prefab": "VFX/VFX_Cast01"
+                },
+                {
+                    "type": "impact",
+                    "prefab": "VFX/VFX_Impact01",
+                    "anchor": "center"
+                }
             ]
         },
         {
             "id": "meteor",
             "nameKey": "skill.meteor",
             "descriptionKey": "skill.meteor.desc",
-            "classId": "mage",
-            "requiresLevel": 7,
             "manaCost": 40,
             "cooldown": 15.0,
             "castTime": 1.2,
@@ -121,13 +153,65 @@
                     "damageType": 1,
                     "damageMultiplier": 2.5,
                     "radius": 3.5,
-                    "range": 12.0,
-                    "impactVfx": "VFX/VFX_Impact01"
+                    "range": 12.0
                 },
                 {
                     "type": "stun",
                     "duration": 1.5,
                     "radius": 3.5
+                }
+            ],
+            "visuals": [
+                {
+                    "type": "cast",
+                    "prefab": "VFX/VFX_Cast01"
+                },
+                {
+                    "type": "projectile",
+                    "prefab": "VFX/VFX_MeteorProjectile",
+                    "travelTime": 1.0
+                },
+                {
+                    "type": "impact",
+                    "prefab": "VFX/VFX_Impact01",
+                    "anchor": "center",
+                    "delay": 1.0
+                }
+            ]
+        },
+        {
+            "id": "arcane_barrage",
+            "nameKey": "skill.arcane_barrage",
+            "descriptionKey": "skill.arcane_barrage.desc",
+            "manaCost": 25,
+            "cooldown": 7.0,
+            "castTime": 0.8,
+            "animationId": "CastArcaneBarrage",
+            "targeting": "mouse",
+            "effects": [
+                {
+                    "type": "damage_aoe",
+                    "damageType": 1,
+                    "damageMultiplier": 1.8,
+                    "radius": 2.5,
+                    "range": 14.0
+                }
+            ],
+            "visuals": [
+                {
+                    "type": "cast",
+                    "prefab": "VFX/VFX_Cast01"
+                },
+                {
+                    "type": "projectile",
+                    "prefab": "VFX/VFX_MeteorProjectile",
+                    "travelTime": 0.8
+                },
+                {
+                    "type": "impact",
+                    "prefab": "VFX/VFX_Impact01",
+                    "anchor": "center",
+                    "delay": 0.8
                 }
             ]
         }

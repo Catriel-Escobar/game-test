@@ -33,7 +33,7 @@ public class DamageAreaEffect : ISkillEffect
 
             Vector3 hitPoint = hits[i].ClosestPoint(context.Center);
             hitPoint += (hitPoint - context.Center).normalized * 0.1f;
-            ImpactVfxSpawner.Spawn(_definition.impactVfx, hitPoint, _definition.impactVfxDuration);
+            context.Player?.Caster?.Visuals?.PlayHit(context, hitPoint);
         }
 
         yield break;

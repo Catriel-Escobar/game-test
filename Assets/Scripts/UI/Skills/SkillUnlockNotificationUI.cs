@@ -18,12 +18,12 @@ public class SkillUnlockNotificationUI : MonoBehaviour
     {
         _localization = ConfigBoostrap.Current.LocalizationConfig;
         if (player?.Skills != null)
-            player.Skills.OnSkillUnlocked += OnSkillUnlocked;
+            player.Skills.OnSkillGained += OnSkillGained;
 
         if (panel != null) panel.SetActive(false);
     }
 
-    private void OnSkillUnlocked(SkillDefinition skill)
+    private void OnSkillGained(SkillDefinition skill)
     {
         if (panel == null) return;
 

@@ -10,7 +10,6 @@ public class CreateCharacterModal : MonoBehaviour
 
     [Header("Inputs")]
     [SerializeField] private TMP_InputField _nameInput;
-    [SerializeField] private TMP_Dropdown _classDropdown;
 
     [Header("Buttons")]
     [SerializeField] private Button _createButton;
@@ -22,7 +21,6 @@ public class CreateCharacterModal : MonoBehaviour
 
     private CharacterSelectionService _service;
     private LocalizationConfig _localization;
-    private CharacterClassesConfig _classesConfig;
 
     public event Action OnCharacterCreated;
     public event Action OnCancelled;
@@ -47,13 +45,10 @@ public class CreateCharacterModal : MonoBehaviour
             _closeButton.onClick.RemoveListener(HandleCancel);
     }
 
-    public void Initialize(CharacterSelectionService service, LocalizationConfig localization, CharacterClassesConfig classesConfig)
+    public void Initialize(CharacterSelectionService service, LocalizationConfig localization)
     {
         _service = service;
         _localization = localization;
-        _classesConfig = classesConfig;
-
-        PopulateClassDropdown();
 
         if (_modalPanel != null)
             _modalPanel.SetActive(false);
@@ -66,9 +61,6 @@ public class CreateCharacterModal : MonoBehaviour
 
         if (_errorText != null)
             _errorText.gameObject.SetActive(false);
-
-        if (_classDropdown != null && _classesConfig?.classes != null && _classesConfig.classes.Length > 0)
-            _classDropdown.value = 0;
 
         gameObject.SetActive(true);
 
@@ -100,9 +92,7 @@ public class CreateCharacterModal : MonoBehaviour
             return;
         }
 
-        string classId = GetSelectedClassId();
-
-        CharacterData newCharacter = _service.CreateCharacter(characterName, classId);
+        CharacterData newCharacter = _service.CreateCharacter(characterName);
         if (newCharacter != null)
         {
             Close();
@@ -123,31 +113,5 @@ public class CreateCharacterModal : MonoBehaviour
             _errorText.text = message;
             _errorText.gameObject.SetActive(true);
         }
-    }
-
-    private void PopulateClassDropdown()
-    {
-        if (_classDropdown == null || _classesConfig?.classes == null) return;
-
-        _classDropdown.ClearOptions();
-
-        var options = new System.Collections.Generic.List<string>();
-        foreach (var entry in _classesConfig.classes)
-        {
-            string displayName = _localization.Get(entry.nameKey);
-            options.Add(displayName);
-        }
-
-        _classDropdown.AddOptions(options);
-    }
-
-    private string GetSelectedClassId()
-    {
-        if (_classesConfig?.classes == null || _classesConfig.classes.Length == 0)
-            return "warrior";
-
-        int index = _classDropdown != null ? _classDropdown.value : 0;
-        index = Mathf.Clamp(index, 0, _classesConfig.classes.Length - 1);
-        return _classesConfig.classes[index].id;
     }
 }

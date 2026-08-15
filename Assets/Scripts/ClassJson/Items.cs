@@ -20,6 +20,7 @@ public class Item
     public int levelRequirement;
     public int maxStackSize;   // 0/1 = no stackea (cada item es unico); >1 = stack maximo (ej. pociones)
     public string visualKey;
+    public string[] skillIds;  // skills que otorga al equiparse (Weapon: hasta 3, OffHand: hasta 1)
     public ItemStats stats;
     public ItemEffect effect;
 

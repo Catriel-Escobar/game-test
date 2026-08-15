@@ -34,7 +34,7 @@ public class GameBootstrap : MonoBehaviour
             saveData = saveService.LoadGameplay(character.id);
         }
 
-        _player.Initialize(ConfigBoostrap, saveData, character?.classId);
+        _player.Initialize(ConfigBoostrap, saveData);
         _playerResourcesUI.Initialize(_player);
         _playerInputs.Initialize(_player);
 

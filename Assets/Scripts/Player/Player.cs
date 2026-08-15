@@ -21,7 +21,6 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
 
     private readonly Dictionary<string, float> _buffMultipliers = new Dictionary<string, float>();
     private float _damageReduction;
-    private SkillUnlockService _skillUnlockService;
 
     public event Action<Vector3> OnDamageReduced;
 
@@ -114,7 +113,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Animation = GetComponent<PlayerAnimationController>();
     }
 
-    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null, string classId = null)
+    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null)
     {
         PlayerConfig = config.PlayerConfig;
         AttackConfig = config.AttackConfig;
@@ -172,13 +171,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         RestoreInventory(saveData?.inventoryItems);
 
         Skills = new PlayerSkills();
-        Skills.Initialize(classId, config.SkillsConfig, saveData?.unlockedSkillIds);
-
-        if (!string.IsNullOrEmpty(classId))
-        {
-            _skillUnlockService = new SkillUnlockService(Skills, Progression);
-            _skillUnlockService.Initialize();
-        }
+        Skills.Initialize(config.SkillsConfig, Equipment);
 
         Caster = GetComponent<SkillCaster>();
         if (Caster == null)

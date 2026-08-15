@@ -23,7 +23,6 @@ public class PlayerSaveData
     public int currentHp;
     public int currentMana;
     public string[] unlockedAttackIds;
-    public string[] unlockedSkillIds;
     public Dictionary<EquipmentSlot, EquippedItemData> equippedItems;
     public ItemStack[] inventoryItems;
     public float playTime;

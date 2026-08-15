@@ -42,7 +42,11 @@ public class SkillSlotUI : MonoBehaviour
             Sprite sprite = Resources.Load<Sprite>($"Skills/Icons/{skill.id}");
             if (sprite != null) icon.sprite = sprite;
         }
-        if (button != null) button.onClick.AddListener(OnButtonClicked);
+        if (button != null)
+        {
+            button.onClick.RemoveListener(OnButtonClicked);
+            button.onClick.AddListener(OnButtonClicked);
+        }
 
         SetUnlocked(true);
         SetCanAfford(true);
@@ -59,12 +63,7 @@ public class SkillSlotUI : MonoBehaviour
     {
         _isUnlocked = unlocked;
         if (lockedOverlay != null) lockedOverlay.SetActive(!unlocked);
-        if (lockedLevelText != null)
-        {
-            lockedLevelText.gameObject.SetActive(!unlocked);
-            if (!unlocked && _skill != null)
-                lockedLevelText.text = $"Lv. {_skill.requiresLevel}";
-        }
+        if (lockedLevelText != null) lockedLevelText.gameObject.SetActive(!unlocked);
     }
 
     public void SetCanAfford(bool canAfford)
@@ -97,6 +96,7 @@ public class SkillSlotUI : MonoBehaviour
     {
         _skill = null;
         _isUnlocked = false;
+        if (icon != null) icon.sprite = null;
         SetUnlocked(false);
         SetCanAfford(true);
         SetCooldown(0f, 0f);

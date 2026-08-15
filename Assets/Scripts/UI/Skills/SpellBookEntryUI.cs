@@ -19,19 +19,7 @@ public class SpellBookEntryUI : MonoBehaviour
         if (descriptionText != null) descriptionText.text = description;
 
         if (requirementText != null)
-        {
-            if (isUnlocked)
-            {
-                requirementText.gameObject.SetActive(false);
-            }
-            else
-            {
-                requirementText.gameObject.SetActive(true);
-                requirementText.text = localization != null
-                    ? string.Format(localization.Get("spellbook.requiresLevel"), skill.requiresLevel)
-                    : $"Requires Lv. {skill.requiresLevel}";
-            }
-        }
+            requirementText.gameObject.SetActive(false);
 
         if (lockedOverlay != null)
             lockedOverlay.SetActive(!isUnlocked);
