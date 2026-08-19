@@ -339,6 +339,7 @@ GameObject:
   - component: {fileID: 870731718007798218}
   - component: {fileID: 1998244512618376791}
   - component: {fileID: 3161580057912674192}
+  - component: {fileID: -1564758372145195374}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -450,6 +451,7 @@ MonoBehaviour:
       attackSpeed: 0
       criticalChance: 0
       criticalDamage: 0
+    inventorySlots: 0
     startingAttack: 
   AttackConfig:
     attacks: []
@@ -547,6 +549,27 @@ MonoBehaviour:
     vfx: 
     impactVfx: 
     impactVfxDuration: 1
+--- !u!114 &-1564758372145195374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9076419626204928424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c45e8853adf0c44d86767485a927699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EmbestidaTrial
+  activeTime: 2
+  meshRefreshRate: 0.05
+  meshDestoyDelay: 0.5
+  postionToSpawn: {fileID: 1887938184014807152}
+  mat: {fileID: 2100000, guid: 78e790c7a9dfce74c95964cfd854c9ce, type: 2}
+  shaderVarRef: _Alpha
+  shaderVarRate: 0.1
+  shaderVarRefreshRate: 0.05
+  rotationOffset: {x: -90, y: 0, z: 0}
 --- !u!1001 &3557120437605225087
 PrefabInstance:
   m_ObjectHideFlags: 0
