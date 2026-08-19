@@ -11,9 +11,11 @@ public class SkillCaster : MonoBehaviour
     public bool IsCasting { get; private set; }
     public SkillDefinition CurrentSkill { get; private set; }
     public SkillCooldownManager Cooldowns => _cooldowns;
+    public SkillVisualDirector Visuals { get; private set; }
 
     public event Action<SkillDefinition> OnCastStarted;
     public event Action<SkillDefinition> OnCastCompleted;
+    public event Action<SkillCastContext> OnEffectsEnded;
 
     private Coroutine _castRoutine;
 
@@ -21,6 +23,10 @@ public class SkillCaster : MonoBehaviour
     {
         _player = player;
         _playerSkills = player.Skills;
+
+        Visuals = GetComponent<SkillVisualDirector>();
+        if (Visuals == null)
+            Visuals = gameObject.AddComponent<SkillVisualDirector>();
     }
 
     public bool TryCastSkill(string skillId)
@@ -38,9 +44,9 @@ public class SkillCaster : MonoBehaviour
             return false;
         }
 
-        if (!_playerSkills.IsUnlocked(skill.id))
+        if (!_playerSkills.IsActiveSkill(skill.id))
         {
-            Debug.Log($"[Skills] Skill no desbloqueada: {skill.id} (requiere nivel {skill.requiresLevel})");
+            Debug.Log($"[Skills] Skill no activa: {skill.id} (la otorga un item equipado)");
             return false;
         }
 
@@ -71,6 +77,13 @@ public class SkillCaster : MonoBehaviour
 
         OnCastStarted?.Invoke(skill);
 
+        Visuals?.PlayTrigger(new SkillCastContext
+        {
+            Player = _player,
+            Skill = skill,
+            Origin = _player.transform.position
+        }, "cast");
+
         if (_castRoutine != null)
             StopCoroutine(_castRoutine);
 
@@ -94,22 +107,7 @@ public class SkillCaster : MonoBehaviour
         Debug.Log($"[Skills] Cast completado: {skill.id} — cooldown {skill.cooldown}s iniciado");
 
         OnCastCompleted?.Invoke(skill);
-        ExecuteEffects(skill);
-    }
 
-    private void ExecuteEffects(SkillDefinition skill)
-    {
-        if (skill?.effects == null || skill.effects.Length == 0)
-        {
-            Debug.Log($"[Skills] {skill.id} no tiene efectos");
-            return;
-        }
-
-        StartCoroutine(ExecuteEffectChain(skill));
-    }
-
-    private IEnumerator ExecuteEffectChain(SkillDefinition skill)
-    {
         SkillCastContext context = new SkillCastContext
         {
             Player = _player,
@@ -118,20 +116,39 @@ public class SkillCaster : MonoBehaviour
         };
 
         ISkillTargeting targeting = SkillTargetingFactory.Create(skill.targeting);
-        targeting.Resolve(context);
+        if (targeting != null)
+            targeting.Resolve(context);
 
-        for (int i = 0; i < skill.effects.Length; i++)
+        Visuals?.PlayTrigger(context, "resolve");
+        StartCoroutine(ExecuteEffectChain(context));
+    }
+
+    private IEnumerator ExecuteEffectChain(SkillCastContext context)
+    {
+        SkillDefinition skill = context.Skill;
+
+        if (skill?.effects != null)
         {
-            ISkillEffect effect = SkillEffectFactory.Create(skill.effects[i]);
-            if (effect == null)
+            for (int i = 0; i < skill.effects.Length; i++)
             {
-                Debug.LogWarning($"[Skills] Efecto desconocido: {skill.effects[i].type}");
-                continue;
-            }
+                ISkillEffect effect = SkillEffectFactory.Create(skill.effects[i]);
+                if (effect == null)
+                {
+                    Debug.LogWarning($"[Skills] Efecto desconocido: {skill.effects[i].type}");
+                    continue;
+                }
 
-            Debug.Log($"[Skills] Aplicando efecto '{skill.effects[i].type}' de {skill.id} (center {context.Center}, dir {context.Direction})");
-            yield return effect.Apply(context);
+                Debug.Log($"[Skills] Aplicando efecto '{skill.effects[i].type}' de {skill.id} (center {context.Center}, dir {context.Direction})");
+                yield return effect.Apply(context);
+            }
         }
+        else
+        {
+            Debug.Log($"[Skills] {skill.id} no tiene efectos");
+        }
+
+        Visuals?.PlayTrigger(context, "end");
+        OnEffectsEnded?.Invoke(context);
     }
 
     private void OnDisable()

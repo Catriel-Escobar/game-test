@@ -30,6 +30,7 @@ public class Mob : MonoBehaviour,ICombatEntity
     public string Id => _enemyConfig != null ? _enemyConfig.id : name;
 
     public string Name => _enemyConfig != null ? _enemyConfig.id : name;
+    public Enemy EnemyConfig => _enemyConfig;
     public MobCombat Combat => _combat;
     private ICombatEntity _lastAttacker;
     public void Initialize(MobSpawnData spawnData)
@@ -43,7 +44,6 @@ public class Mob : MonoBehaviour,ICombatEntity
         _healthMultiplier = spawnData.HealthMultiplier;
         _damageMultiplier = spawnData.DamageMultiplier;
         _baseSpeed = agent.speed;
-        Debug.Log(_resources);
         ResolveEnemyConfig(spawnData);
         _resources?.Initialize(_enemyConfig, _healthMultiplier);
 
@@ -236,6 +236,7 @@ public class Mob : MonoBehaviour,ICombatEntity
         if (_lastAttacker is Player player)
         {
             player.Progression.AddExperience(_enemyConfig.experience);
+            MobDropHandler.RollDrops(this, player);
         }
 
         NavMeshAgent agent = GetComponent<NavMeshAgent>();

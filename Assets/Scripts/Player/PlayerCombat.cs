@@ -9,6 +9,7 @@ public class PlayerCombat:MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private PlayerResources playerResources;
     [SerializeField] private PlayerMovement playerMovement;
+    private Player _player;
     private AttackConfig attackConfig;
     private StatsConfig statsConfig;
     private float baseAttackSpeed;
@@ -20,6 +21,10 @@ public class PlayerCombat:MonoBehaviour
 
     public Attack CurrentAttack;
 
+    private string _attackVfxPath;
+    private GameObject _attackVfxPrefab;
+    private GameObject _attackVfxInstance;
+
     private void Start()
     {
         playerInputs = GetComponent<PlayerInputs>();
@@ -27,6 +32,7 @@ public class PlayerCombat:MonoBehaviour
     }
     internal void   Initilizate(Player player)
     {
+        _player = player;
         playerAnimation = player.Animation;
         playerStats = player.Stats;
         playerResources = player.Resources;
@@ -40,10 +46,18 @@ public class PlayerCombat:MonoBehaviour
     {
         if (context.phase != InputActionPhase.Performed) return;
 
+        Vector2 mousePos = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
+        if (InventoryUI.IsPointerOverPanel(mousePos) || EquipmentUI.IsPointerOverPanel(mousePos))
+            return;
+
+        if (TryInteractWithDrop()) return;
+
         Attack candidateAttack = FindAttackById("basic_attack");
         if (candidateAttack == null) return;
 
         if (IsSwinging) return;
+
+        playerMovement.CancelMoveTo();
 
         CurrentAttack = candidateAttack;
 
@@ -81,10 +95,44 @@ public class PlayerCombat:MonoBehaviour
 
         IsAttacking = active;
 
+        if (active)
+            SpawnAttackVfx();
+        else
+            DespawnAttackVfx();
+
         if (!active)
             CurrentAttack = null;
 
         OnAttackStateChanged?.Invoke(IsAttacking);
+    }
+
+    private void SpawnAttackVfx()
+    {
+        if (CurrentAttack == null || string.IsNullOrEmpty(CurrentAttack.vfx)) return;
+
+        if (_attackVfxPrefab == null || _attackVfxPath != CurrentAttack.vfx)
+        {
+            _attackVfxPath = CurrentAttack.vfx;
+            _attackVfxPrefab = Resources.Load<GameObject>(_attackVfxPath);
+        }
+
+        if (_attackVfxPrefab == null)
+        {
+            Debug.LogWarning($"[Combat] VFX '{CurrentAttack.vfx}' no encontrado en Resources.");
+            return;
+        }
+
+        _attackVfxInstance = Instantiate(_attackVfxPrefab, transform);
+        _attackVfxInstance.transform.localPosition =
+            new Vector3(0f, 1.2f, CurrentAttack.range * 0.5f);
+    }
+
+    private void DespawnAttackVfx()
+    {
+        if (_attackVfxInstance == null) return;
+
+        Destroy(_attackVfxInstance);
+        _attackVfxInstance = null;
     }
 
     private Attack FindAttackById(string attackId)
@@ -116,5 +164,26 @@ public class PlayerCombat:MonoBehaviour
             return ray.GetPoint(enter);
 
         return transform.position + transform.forward;
+    }
+
+    private bool TryInteractWithDrop()
+    {
+        if (playerMovement == null) return false;
+
+        Vector2 mousePosition = Mouse.current != null ? Mouse.current.position.ReadValue() : Vector2.zero;
+        WorldDrop drop = DropRegistry.FindDropAtScreenPoint(mousePosition);
+        if (drop == null) return false;
+
+        float sqrDistance = (drop.transform.position - transform.position).sqrMagnitude;
+        if (sqrDistance <= drop.PickupRadius * drop.PickupRadius)
+        {
+            drop.TryPickup(_player);
+        }
+        else
+        {
+            playerMovement.MoveTo(drop.transform.position, drop.PickupRadius, () => drop.TryPickup(_player));
+        }
+
+        return true;
     }
 }

@@ -30,6 +30,10 @@ public class DamageAreaEffect : ISkillEffect
             if (mob.IsDead) continue;
 
             combat.Attack(context.Player, mob, attack);
+
+            Vector3 hitPoint = hits[i].ClosestPoint(context.Center);
+            hitPoint += (hitPoint - context.Center).normalized * 0.1f;
+            context.Player?.Caster?.Visuals?.PlayHit(context, hitPoint);
         }
 
         yield break;

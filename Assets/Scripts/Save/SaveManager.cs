@@ -1,10 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class SaveManager
 {
+    private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+    {
+        Formatting = Formatting.Indented
+    };
+
     private string SavePath => Path.Combine(Application.persistentDataPath, "characters.json");
 
     private string GameplaySavePath(string characterId) =>
@@ -18,7 +25,7 @@ public class SaveManager
         try
         {
             string json = File.ReadAllText(SavePath);
-            CharacterSaveData data = JsonUtility.FromJson<CharacterSaveData>(json);
+            CharacterSaveData data = JsonConvert.DeserializeObject<CharacterSaveData>(json);
             if (data?.characters != null)
                 return new List<CharacterData>(data.characters);
         }
@@ -35,7 +42,7 @@ public class SaveManager
         try
         {
             CharacterSaveData data = new CharacterSaveData { characters = characters };
-            string json = JsonUtility.ToJson(data, true);
+            string json = JsonConvert.SerializeObject(data, JsonSettings);
             File.WriteAllText(SavePath, json);
         }
         catch (Exception e)
@@ -48,7 +55,7 @@ public class SaveManager
     {
         try
         {
-            string json = JsonUtility.ToJson(saveData, true);
+            string json = JsonConvert.SerializeObject(saveData, JsonSettings);
             File.WriteAllText(GameplaySavePath(characterId), json);
         }
         catch (Exception e)
@@ -66,7 +73,12 @@ public class SaveManager
         try
         {
             string json = File.ReadAllText(path);
-            return JsonUtility.FromJson<PlayerSaveData>(json);
+            JObject root = JObject.Parse(json);
+
+            if (root["equippedItems"] is JArray oldArray)
+                root["equippedItems"] = MigrateEquippedArray(oldArray);
+
+            return root.ToObject<PlayerSaveData>();
         }
         catch (Exception e)
         {
@@ -74,6 +86,26 @@ public class SaveManager
         }
 
         return null;
+    }
+
+    private static JObject MigrateEquippedArray(JArray oldArray)
+    {
+        JObject map = new JObject();
+        if (oldArray == null) return map;
+
+        foreach (JToken token in oldArray)
+        {
+            JObject entry = token as JObject;
+            if (entry == null) continue;
+
+            string slotName = entry["slot"]?.ToString();
+            if (string.IsNullOrEmpty(slotName)) continue;
+
+            entry.Remove("slot");
+            map[slotName] = entry;
+        }
+
+        return map;
     }
 
     public void DeleteGameplay(string characterId)

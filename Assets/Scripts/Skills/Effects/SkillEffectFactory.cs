@@ -11,6 +11,8 @@ public static class SkillEffectFactory
             "dash" => new DashEffect(definition),
             "stun" => new StunEffect(definition),
             "slow" => new SlowEffect(definition),
+            "debuff" => new DebuffEffect(definition),
+            "shield" => new ShieldEffect(definition),
             _ => null,
         };
     }

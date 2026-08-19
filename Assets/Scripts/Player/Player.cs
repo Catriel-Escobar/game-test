@@ -14,11 +14,29 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
     public PlayerAnimationController Animation { get; private set; }
     public PlayerSkills Skills { get; private set; }
     public SkillCaster Caster { get; private set; }
+    public PlayerEquipment Equipment { get; private set; }
+    public PlayerInventory Inventory { get; private set; }
 
     public Dictionary<string,string> UnlockedAttackIds { get; private set; }
 
     private readonly Dictionary<string, float> _buffMultipliers = new Dictionary<string, float>();
-    private SkillUnlockService _skillUnlockService;
+    private float _damageReduction;
+
+    public event Action<Vector3> OnDamageReduced;
+
+    public float DamageReductionPercent => Mathf.Clamp01(_damageReduction);
+
+    public float MovementSpeedMultiplier => GetBuffMultiplier("move_speed");
+
+    public void AddDamageReduction(float percent)
+    {
+        _damageReduction += percent;
+    }
+
+    public void RemoveDamageReduction(float percent)
+    {
+        _damageReduction = Mathf.Max(0f, _damageReduction - percent);
+    }
 
     //! CONFIGS
     public PlayerConfig PlayerConfig;
@@ -36,14 +54,20 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             if (Stats == null || StatsConfig == null || PlayerConfig == null)
                 return new CombatStats();
 
+            ItemStats equipment = Equipment != null ? Equipment.TotalStats : new ItemStats();
+            int strength = Stats.Strength + equipment.strength;
+            int vitality = Stats.Vitality + equipment.vitality;
+            int intelligence = Stats.Intelligence + equipment.intelligence;
+            int dexterity = Stats.Dexterity + equipment.dexterity;
+
             return new CombatStats
             {
-                PhysicalAttack = Mathf.RoundToInt((Stats.Strength * StatsConfig.strength.damagePerPoint) * GetBuffMultiplier("physical_attack")),
-                MagicAttack = Mathf.RoundToInt((Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_attack")),
-                PhysicalDefense = Mathf.RoundToInt((Stats.Vitality * StatsConfig.vitality.healthPerPoint) * GetBuffMultiplier("physical_defense")),
-                MagicDefense = Mathf.RoundToInt((Stats.Intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_defense")),
+                PhysicalAttack = Mathf.RoundToInt((strength * StatsConfig.strength.damagePerPoint + equipment.damage) * GetBuffMultiplier("physical_attack")),
+                MagicAttack = Mathf.RoundToInt((intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_attack")),
+                PhysicalDefense = Mathf.RoundToInt((vitality * StatsConfig.vitality.healthPerPoint + equipment.armor) * GetBuffMultiplier("physical_defense")),
+                MagicDefense = Mathf.RoundToInt((intelligence * StatsConfig.intelligence.spellDamagePerPoint) * GetBuffMultiplier("magical_defense")),
                 CriticalChance = (PlayerConfig.combat.criticalChance +
-                                 (Stats.Dexterity * StatsConfig.Dexterity.criticalChancePerPoint)) * GetBuffMultiplier("critical_chance"),
+                                 (dexterity * StatsConfig.Dexterity.criticalChancePerPoint)) * GetBuffMultiplier("critical_chance"),
                 CriticalDamage = PlayerConfig.combat.criticalDamage * GetBuffMultiplier("critical_damage")
             };
         }
@@ -89,7 +113,7 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
         Animation = GetComponent<PlayerAnimationController>();
     }
 
-    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null, string classId = null)
+    public void Initialize(ConfigBoostrap config, PlayerSaveData saveData = null)
     {
         PlayerConfig = config.PlayerConfig;
         AttackConfig = config.AttackConfig;
@@ -135,20 +159,39 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             Resources.Initialize(PlayerConfig.baseResources, this);
         }
 
-        Skills = new PlayerSkills();
-        Skills.Initialize(classId, config.SkillsConfig, saveData?.unlockedSkillIds);
+        Equipment = GetComponent<PlayerEquipment>();
+        if (Equipment == null)
+            Equipment = gameObject.AddComponent<PlayerEquipment>();
+        Equipment.Initialize(this, config.ItemsConfig, saveData?.equippedItems);
 
-        if (!string.IsNullOrEmpty(classId))
-        {
-            _skillUnlockService = new SkillUnlockService(Skills, Progression);
-            _skillUnlockService.Initialize();
-        }
+        Inventory = GetComponent<PlayerInventory>();
+        if (Inventory == null)
+            Inventory = gameObject.AddComponent<PlayerInventory>();
+        Inventory.SetCapacity(PlayerConfig.inventorySlots);
+        RestoreInventory(saveData?.inventoryItems);
+
+        Skills = new PlayerSkills();
+        Skills.Initialize(config.SkillsConfig, Equipment);
 
         Caster = GetComponent<SkillCaster>();
         if (Caster == null)
             Caster = gameObject.AddComponent<SkillCaster>();
 
         Caster.Initialize(this);
+        Caster.OnCastStarted += _ => Movement.SetMovementBlocked(true);
+        Caster.OnCastCompleted += _ => Movement.SetMovementBlocked(false);
+    }
+
+    private void RestoreInventory(ItemStack[] stacks)
+    {
+        if (Inventory == null || stacks == null) return;
+
+        for (int i = 0; i < stacks.Length; i++)
+        {
+            ItemStack stack = stacks[i];
+            if (stack == null || string.IsNullOrEmpty(stack.itemId) || stack.count <= 0) continue;
+            Inventory.AddItem(stack.itemId, stack.count, stack.affixes, stack.instanceId);
+        }
     }
 
     private void Start()
@@ -169,7 +212,33 @@ public class Player : MonoBehaviour, ICombatEntity,ITargetable
             ? damageData.FinalDamage
             : damageData.BaseDamage;
 
+        if (DamageReductionPercent > 0f)
+        {
+            damage = Mathf.Max(1, Mathf.RoundToInt(damage * (1f - DamageReductionPercent)));
+            OnDamageReduced?.Invoke(GetHitPoint(damageData));
+        }
+
         Resources.TakeDamage(damage);
 
+    }
+
+    private const float ShieldRadius = 1.2f;
+
+    private Vector3 GetHitPoint(DamageData damageData)
+    {
+        if (damageData.Source is Component source)
+        {
+            Vector3 direction = transform.position - source.transform.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude < 0.001f)
+                direction = transform.forward;
+            else
+                direction.Normalize();
+
+            return transform.position + direction * ShieldRadius;
+        }
+
+        return transform.position;
     }
 }

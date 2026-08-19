@@ -15,4 +15,6 @@ public class GameConfig
     public string skills;
     public string localization;
     public string characterClasses;
+    public string affixes;
+    public string drops;
 }

@@ -41,6 +41,7 @@ public class PlayerInputs : MonoBehaviour
         _input.Player.Skill1.performed += OnSkill1;
         _input.Player.Skill2.performed += OnSkill2;
         _input.Player.Skill3.performed += OnSkill3;
+        _input.Player.Interact.performed += OnInteract;
     }
 
   
@@ -89,6 +90,7 @@ public class PlayerInputs : MonoBehaviour
         _input.Player.Skill1.performed -= OnSkill1;
         _input.Player.Skill2.performed -= OnSkill2;
         _input.Player.Skill3.performed -= OnSkill3;
+        _input.Player.Interact.performed -= OnInteract;
         _input.Disable();
     }
 
@@ -126,6 +128,17 @@ public class PlayerInputs : MonoBehaviour
     {
         _moveInput = ctx.ReadValue<Vector2>();
         
+    }
+
+    private void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.phase != InputActionPhase.Performed) return;
+        if (_player == null) return;
+
+        WorldDrop drop = DropRegistry.FindNearestPickupable(_player);
+        if (drop == null) return;
+
+        drop.TryPickup(_player);
     }
 
     private void Update()

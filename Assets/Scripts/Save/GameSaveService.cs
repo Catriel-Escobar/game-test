@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
 public class GameSaveService
 {
     private readonly SaveManager _saveManager;
@@ -19,7 +18,8 @@ public class GameSaveService
             level = 1,
             currentExperience = 0,
             unlockedAttackIds = new string[0],
-            unlockedSkillIds = new string[0],
+            equippedItems = new Dictionary<EquipmentSlot, EquippedItemData>(),
+            inventoryItems = new ItemStack[0],
             playTime = 0f
         };
     }
@@ -42,7 +42,8 @@ public class GameSaveService
             currentHp = player.Resources.CurrentHp,
             currentMana = player.Resources.CurrentMana,
             unlockedAttackIds = player.UnlockedAttackIds.Keys.ToArray(),
-            unlockedSkillIds = player.Skills?.UnlockedSkillIds.ToArray(),
+            equippedItems = player.Equipment?.GetEquippedData(),
+            inventoryItems = player.Inventory?.Stacks == null ? null : player.Inventory.Stacks.ToArray(),
             playTime = character.playTime
         };
 

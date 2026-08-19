@@ -24,5 +24,7 @@
         "criticalDamage": 1.5
     },
 
+    "inventorySlots": 50,
+
     "startingAttack": "basic_attack"
 }

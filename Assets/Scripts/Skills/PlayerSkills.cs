@@ -4,36 +4,84 @@ using UnityEngine;
 
 public class PlayerSkills
 {
-    public string ClassId { get; private set; }
+    private const int MaxActiveSkills = 3;
+
     public SkillsConfig SkillsConfig { get; private set; }
-    public HashSet<string> UnlockedSkillIds { get; private set; } = new HashSet<string>();
+    private PlayerEquipment _equipment;
+    private readonly List<string> _activeSkillIds = new List<string>();
 
-    public event Action<SkillDefinition> OnSkillUnlocked;
+    public event Action OnSkillsChanged;
+    public event Action<SkillDefinition> OnSkillGained;
 
-    public void Initialize(string classId, SkillsConfig skillsConfig, string[] unlockedSkillIds = null)
+    public void Initialize(SkillsConfig skillsConfig, PlayerEquipment equipment)
     {
-        ClassId = classId;
         SkillsConfig = skillsConfig;
+        _equipment = equipment;
 
-        UnlockedSkillIds = new HashSet<string>();
-        if (unlockedSkillIds != null)
+        if (_equipment != null)
+            _equipment.OnEquipmentChanged += HandleEquipmentChanged;
+
+        RefreshActiveSkills();
+    }
+
+    public void Dispose()
+    {
+        if (_equipment != null)
+            _equipment.OnEquipmentChanged -= HandleEquipmentChanged;
+    }
+
+    private void HandleEquipmentChanged()
+    {
+        RefreshActiveSkills();
+    }
+
+    private void RefreshActiveSkills()
+    {
+        List<string> previous = new List<string>(_activeSkillIds);
+
+        _activeSkillIds.Clear();
+        if (_equipment != null)
         {
-            for (int i = 0; i < unlockedSkillIds.Length; i++)
-                UnlockedSkillIds.Add(unlockedSkillIds[i]);
+            AddSlotSkills(EquipmentSlot.Weapon, _activeSkillIds);
+            AddSlotSkills(EquipmentSlot.OffHand, _activeSkillIds);
+        }
+
+        OnSkillsChanged?.Invoke();
+
+        for (int i = 0; i < _activeSkillIds.Count; i++)
+        {
+            if (!previous.Contains(_activeSkillIds[i]))
+                OnSkillGained?.Invoke(GetSkill(_activeSkillIds[i]));
         }
     }
 
-    public SkillDefinition[] GetClassSkills()
+    private void AddSlotSkills(EquipmentSlot slot, List<string> target)
     {
-        if (SkillsConfig?.skills == null || string.IsNullOrEmpty(ClassId))
-            return Array.Empty<SkillDefinition>();
+        if (_equipment == null) return;
 
-        List<SkillDefinition> result = new List<SkillDefinition>();
-        for (int i = 0; i < SkillsConfig.skills.Length; i++)
+        Item item = _equipment.GetItemInSlot(slot);
+        if (item?.skillIds == null) return;
+
+        for (int i = 0; i < item.skillIds.Length && target.Count < MaxActiveSkills; i++)
         {
-            SkillDefinition skill = SkillsConfig.skills[i];
-            if (skill.classId == ClassId)
-                result.Add(skill);
+            string skillId = item.skillIds[i];
+            if (string.IsNullOrEmpty(skillId) || target.Contains(skillId)) continue;
+            target.Add(skillId);
+        }
+    }
+
+    public string[] GetEquippedSkillIds()
+    {
+        return _activeSkillIds.ToArray();
+    }
+
+    public SkillDefinition[] GetActiveSkills()
+    {
+        List<SkillDefinition> result = new List<SkillDefinition>();
+        for (int i = 0; i < _activeSkillIds.Count; i++)
+        {
+            SkillDefinition definition = GetSkill(_activeSkillIds[i]);
+            if (definition != null) result.Add(definition);
         }
 
         return result.ToArray();
@@ -41,7 +89,7 @@ public class PlayerSkills
 
     public SkillDefinition GetSkill(string skillId)
     {
-        if (SkillsConfig?.skills == null) return null;
+        if (SkillsConfig?.skills == null || string.IsNullOrEmpty(skillId)) return null;
 
         for (int i = 0; i < SkillsConfig.skills.Length; i++)
         {
@@ -52,45 +100,16 @@ public class PlayerSkills
         return null;
     }
 
-    public bool IsUnlocked(string skillId)
+    public bool IsActiveSkill(string skillId)
     {
-        return UnlockedSkillIds.Contains(skillId);
-    }
-
-    public string[] GetEquippedSkillIds()
-    {
-        SkillDefinition[] classSkills = GetClassSkills();
-        List<string> equipped = new List<string>();
-
-        for (int i = 0; i < classSkills.Length && equipped.Count < 3; i++)
-        {
-            if (IsUnlocked(classSkills[i].id))
-                equipped.Add(classSkills[i].id);
-        }
-
-        return equipped.ToArray();
-    }
-
-    public void Unlock(SkillDefinition skill)
-    {
-        if (skill == null || UnlockedSkillIds.Contains(skill.id)) return;
-
-        UnlockedSkillIds.Add(skill.id);
-        Debug.Log($"[Skills] Desbloqueada: {skill.id} (clase {skill.classId}, requiere nivel {skill.requiresLevel})");
-        OnSkillUnlocked?.Invoke(skill);
+        return _activeSkillIds.Contains(skillId);
     }
 
     public void DebugPrintSkills()
     {
-        Debug.Log($"[Skills] Clase: {ClassId} | Skills desbloqueadas: {UnlockedSkillIds.Count}");
-        SkillDefinition[] classSkills = GetClassSkills();
-        for (int i = 0; i < classSkills.Length; i++)
-        {
-            SkillDefinition skill = classSkills[i];
-            string state = IsUnlocked(skill.id)
-                ? "DESBLOQUEADA"
-                : $"bloqueada (requiere nivel {skill.requiresLevel})";
-            Debug.Log($"[Skills]  - {skill.id}: {state}");
-        }
+        Debug.Log($"[Skills] Skills activas del equipo: {_activeSkillIds.Count}");
+        SkillDefinition[] activeSkills = GetActiveSkills();
+        for (int i = 0; i < activeSkills.Length; i++)
+            Debug.Log($"[Skills]  - {activeSkills[i].id}");
     }
 }

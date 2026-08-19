@@ -8,7 +8,6 @@ public class SkillHotbarUI : MonoBehaviour
     [SerializeField] private string[] keyBindings = { "Q", "E", "R" };
 
     private Player _player;
-    private SkillDefinition[] _classSkills;
     private readonly Dictionary<string, SkillSlotUI> _slotBySkill = new Dictionary<string, SkillSlotUI>();
 
     public void Initialize(Player player)
@@ -16,42 +15,16 @@ public class SkillHotbarUI : MonoBehaviour
         _player = player;
         if (player?.Skills == null) return;
 
-        _classSkills = player.Skills.GetClassSkills();
-
-        for (int i = 0; i < slots.Length; i++)
-        {
-            if (slots[i] == null) continue;
-
-            if (i < _classSkills.Length)
-            {
-                SkillDefinition skill = _classSkills[i];
-                slots[i].Setup(skill, i < keyBindings.Length ? keyBindings[i] : "", OnSlotClicked);
-                _slotBySkill[skill.id] = slots[i];
-            }
-            else
-            {
-                slots[i].ResetSlot();
-                slots[i].gameObject.SetActive(false);
-            }
-        }
-
-        player.Skills.OnSkillUnlocked += OnSkillUnlocked;
+        player.Skills.OnSkillsChanged += RebuildSlots;
         player.Resources.OnManaChanged += OnManaChanged;
         player.Caster.OnCastCompleted += OnCastCompleted;
 
-        RefreshSlots();
+        RebuildSlots();
     }
 
     private void OnSlotClicked(SkillDefinition skill)
     {
         _player?.Caster?.TryCastSkill(skill.id);
-    }
-
-    private void OnSkillUnlocked(SkillDefinition skill)
-    {
-        if (_slotBySkill.TryGetValue(skill.id, out SkillSlotUI slot))
-            slot.SetUnlocked(true);
-        RefreshManaAffordability();
     }
 
     private void OnManaChanged(int currentMana, int maxMana)
@@ -70,17 +43,32 @@ public class SkillHotbarUI : MonoBehaviour
         RefreshCooldowns();
     }
 
-    private void RefreshSlots()
+    private void RebuildSlots()
     {
         if (_player?.Skills == null) return;
 
+        _slotBySkill.Clear();
+        SkillDefinition[] activeSkills = _player.Skills.GetActiveSkills();
+
         for (int i = 0; i < slots.Length; i++)
         {
-            if (slots[i] == null || slots[i].Skill == null) continue;
-            slots[i].SetUnlocked(_player.Skills.IsUnlocked(slots[i].Skill.id));
+            if (slots[i] == null) continue;
+
+            slots[i].ResetSlot();
+
+            if (i < activeSkills.Length)
+            {
+                SkillDefinition skill = activeSkills[i];
+                slots[i].Setup(skill, i < keyBindings.Length ? keyBindings[i] : "", OnSlotClicked);
+                _slotBySkill[skill.id] = slots[i];
+                slots[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                slots[i].gameObject.SetActive(false);
+            }
         }
 
-        RefreshCooldowns();
         RefreshManaAffordability();
     }
 
@@ -114,7 +102,7 @@ public class SkillHotbarUI : MonoBehaviour
         if (_player == null) return;
 
         if (_player.Skills != null)
-            _player.Skills.OnSkillUnlocked -= OnSkillUnlocked;
+            _player.Skills.OnSkillsChanged -= RebuildSlots;
         if (_player.Resources != null)
             _player.Resources.OnManaChanged -= OnManaChanged;
         if (_player.Caster != null)

@@ -18,7 +18,7 @@ public class CharacterSelectionService
         return _saveManager.Load();
     }
 
-    public CharacterData CreateCharacter(string name, string classId)
+    public CharacterData CreateCharacter(string name)
     {
         if (!CanCreateCharacter())
         {
@@ -38,7 +38,7 @@ public class CharacterSelectionService
             name = name.Trim(),
             level = 1,
             playTime = 0f,
-            classId = classId,
+            classId = "",
             portraitId = ""
         };
 

@@ -8,5 +8,7 @@
     "spawners": "GameData/Config/spawners",
     "skills": "GameData/Config/skills",
     "localization": "GameData/Config/localization",
-    "characterClasses": "GameData/Config/character_classes"
+    "characterClasses": "GameData/Config/character_classes",
+    "affixes": "GameData/Config/affixes",
+    "drops": "GameData/Config/drops"
 }
