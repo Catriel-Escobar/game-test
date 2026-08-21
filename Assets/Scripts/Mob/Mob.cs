@@ -162,7 +162,8 @@ public class Mob : MonoBehaviour,ICombatEntity
         IsStunned = true;
 
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        if (agent != null) agent.isStopped = true;
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.isStopped = true;
 
         Debug.Log($"[Skills] {name} stuneado");
     }
@@ -173,7 +174,8 @@ public class Mob : MonoBehaviour,ICombatEntity
         IsStunned = false;
 
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
-        if (agent != null) agent.isStopped = false;
+        if (agent != null && agent.isActiveAndEnabled && agent.isOnNavMesh)
+            agent.isStopped = false;
 
         Debug.Log($"[Skills] {name} deja de estar stuneado");
     }
