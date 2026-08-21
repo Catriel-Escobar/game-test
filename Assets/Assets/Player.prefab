@@ -421,6 +421,7 @@ MonoBehaviour:
   _rotationSpeed: 720
   _acceleration: 5
   _deceleration: 8
+  _dashTrail: {fileID: -1564758372145195374}
 --- !u!114 &2658647315289441057
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -563,8 +564,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EmbestidaTrial
   activeTime: 2
   meshRefreshRate: 0.05
-  meshDestoyDelay: 0.5
-  postionToSpawn: {fileID: 1887938184014807152}
+  meshDestroyDelay: 1
+  spawnPosition: {fileID: 0}
   mat: {fileID: 2100000, guid: 78e790c7a9dfce74c95964cfd854c9ce, type: 2}
   shaderVarRef: _Alpha
   shaderVarRate: 0.1

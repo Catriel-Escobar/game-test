@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 720f;
     [SerializeField] private float _acceleration = 5f;
     [SerializeField] private float _deceleration = 8f;
+    [SerializeField] private DashTrailEffect _dashTrail;
     private bool _IsAttacking = false;
     public float Speed => _normalizedSpeed;
 
@@ -222,6 +223,8 @@ public class PlayerMovement : MonoBehaviour
         _dashDirection.Normalize();
         _dashSpeed = speed;
         _normalizedSpeed = 1f;
+
+        _dashTrail?.PlayTrail(_dashDirection);
     }
 
     public void DashStep()
@@ -245,6 +248,8 @@ public class PlayerMovement : MonoBehaviour
     {
         _isDashing = false;
         _velocity = Vector3.zero;
+
+        _dashTrail?.StopTrail();
     }
     internal void AttackStateChanged(bool obj)
     {

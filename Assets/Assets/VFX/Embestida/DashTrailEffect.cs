@@ -2,14 +2,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class EmbestidaTrial : MonoBehaviour
+public class DashTrailEffect : MonoBehaviour
 {
     public float activeTime = 2f;
 
     [Header("Mesh Related")]
     public float meshRefreshRate = 0.1f;
-    public float meshDestoyDelay = 1f;
-    public Transform postionToSpawn;
+    public float meshDestroyDelay = 1f;
+    public Transform spawnPosition;
 
     [Header("Shader Related")]
     public Material mat;
@@ -49,12 +49,12 @@ public class EmbestidaTrial : MonoBehaviour
 
         if (mat == null)
         {
-            Debug.LogWarning($"[EmbestidaTrail] Falta asignar un material en {name}.");
+            Debug.LogWarning($"[DashTrail] Missing material on {name}.");
             return;
         }
 
         _trailDirection = trailDirection;
-        _trailRoutine = StartCoroutine(Embestida(activeTime));
+        _trailRoutine = StartCoroutine(TrailRoutine(activeTime));
     }
 
     public void StopTrail()
@@ -68,7 +68,7 @@ public class EmbestidaTrial : MonoBehaviour
         isTrailActive = false;
     }
 
-    private IEnumerator Embestida(float timeActive)
+    private IEnumerator TrailRoutine(float timeActive)
     {
         isTrailActive = true;
 
@@ -81,7 +81,7 @@ public class EmbestidaTrial : MonoBehaviour
                 skinnedMeshRenderers = GetComponentsInChildren<SkinnedMeshRenderer>(true);
             }
 
-            Transform spawnTransform = postionToSpawn != null ? postionToSpawn : transform;
+            Transform spawnTransform = spawnPosition != null ? spawnPosition : transform;
             Quaternion spawnRotation = GetFlatRotation(_trailDirection) * Quaternion.Euler(rotationOffset);
 
             for (int i = 0; i < skinnedMeshRenderers.Length; i++)
@@ -109,8 +109,8 @@ public class EmbestidaTrial : MonoBehaviour
                     StartCoroutine(AnimateMaterialFloat(mr.material, 1f, 0f, shaderVarRate));
                 }
 
-                Destroy(mesh, meshDestoyDelay);
-                Destroy(gObj, meshDestoyDelay);
+                Destroy(mesh, meshDestroyDelay);
+                Destroy(gObj, meshDestroyDelay);
             }
 
             yield return new WaitForSeconds(meshRefreshRate);

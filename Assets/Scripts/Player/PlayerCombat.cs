@@ -19,6 +19,21 @@ public class PlayerCombat:MonoBehaviour
     public event Action<bool> OnAttackStateChanged;
     public event Action<bool> OnSwingStateChanged;
 
+    private const float MaxSwingDuration = 3f;
+    private float _swingStartedAt;
+    private float _actionLockedUntil;
+
+    public bool IsActionLocked => Time.time < _actionLockedUntil;
+
+    public void LockActionFor(float duration)
+    {
+        if (duration <= 0f) return;
+
+        float until = Time.time + duration;
+        if (until > _actionLockedUntil)
+            _actionLockedUntil = until;
+    }
+
     public Attack CurrentAttack;
 
     private string _attackVfxPath;
@@ -55,7 +70,16 @@ public class PlayerCombat:MonoBehaviour
         Attack candidateAttack = FindAttackById("basic_attack");
         if (candidateAttack == null) return;
 
-        if (IsSwinging) return;
+        if (IsActionLocked) return;
+
+        if (_player != null && _player.Caster != null && _player.Caster.IsCasting) return;
+
+        if (IsSwinging)
+        {
+            if (Time.time - _swingStartedAt < MaxSwingDuration) return;
+
+            ResetActionState();
+        }
 
         playerMovement.CancelMoveTo();
 
@@ -78,6 +102,7 @@ public class PlayerCombat:MonoBehaviour
         if (IsSwinging) return;
 
         IsSwinging = true;
+        _swingStartedAt = Time.time;
         OnSwingStateChanged?.Invoke(true);
     }
 
@@ -87,6 +112,12 @@ public class PlayerCombat:MonoBehaviour
 
         IsSwinging = false;
         OnSwingStateChanged?.Invoke(false);
+    }
+
+    public void ResetActionState()
+    {
+        EndSwing();
+        SetAttackActive(false);
     }
 
     public void SetAttackActive(bool active)

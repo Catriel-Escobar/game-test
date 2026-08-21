@@ -4,8 +4,8 @@
             "id": "seismic_strike",
             "nameKey": "skill.seismic_strike",
             "descriptionKey": "skill.seismic_strike.desc",
-            "manaCost": 15,
-            "cooldown": 8.0,
+            "manaCost": 0,
+            "cooldown": 1.0,
             "castTime": 0.6,
             "animationId": "SeismicStrike",
             "targeting": "self",
@@ -30,8 +30,9 @@
                 },
                 {
                     "type": "impact",
-                    "prefab": "VFX/VFX_Impact01",
-                    "anchor": "center"
+                    "prefab": "VFX/VFX_SeismicStrikeVFX",
+                    "anchor": "center",
+                    "destroyAfter": 3.0
                 }
             ]
         },
@@ -39,8 +40,8 @@
             "id": "dash_strike",
             "nameKey": "skill.dash_strike",
             "descriptionKey": "skill.dash_strike.desc",
-            "manaCost": 12,
-            "cooldown": 10.0,
+            "manaCost": 0,
+            "cooldown": 1.0,
             "castTime": 0.2,
             "animationId": "Dash",
             "targeting": "move_dir",

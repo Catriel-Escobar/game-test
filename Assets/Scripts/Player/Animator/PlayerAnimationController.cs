@@ -63,10 +63,15 @@ public class PlayerAnimationController : MonoBehaviour
     {
         try
         {
-            float speed = GetAnimationLength(attack.id) / attack.duration;
+            combat?.ResetActionState();
+
+            float clipLength = GetAnimationLength(attack.id);
+            float speed = clipLength / attack.duration;
             speed *= attackSpeedMultiplier;
             animator.SetFloat(AnimationHashes.AttackSpeed, speed);
             FireTrigger(Animator.StringToHash(attack.id));
+
+            combat?.LockActionFor(clipLength / speed);
         }
         catch (System.Exception ex)
         {
@@ -79,10 +84,15 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (string.IsNullOrEmpty(animationId)) return;
 
-        if (!_clips.ContainsKey(animationId))
+        if (!_clips.TryGetValue(animationId, out AnimationClip clip))
             Debug.LogWarning($"[Skills] Animación '{animationId}' no encontrada en los clips del Animator (verificar nombre del clip)");
 
+        combat?.ResetActionState();
+
         FireTrigger(Animator.StringToHash(animationId));
+
+        if (clip != null)
+            combat?.LockActionFor(clip.length);
     }
 
     public int SelectHash(string param)
@@ -106,7 +116,7 @@ public class PlayerAnimationController : MonoBehaviour
 
     private void FireTrigger(int triggerHash)
     {
-        animator.ResetTrigger(triggerHash);
+        animator.ResetTrigger(0);
         animator.SetTrigger(triggerHash);
     }
 }

@@ -44,6 +44,12 @@ public class SkillCaster : MonoBehaviour
             return false;
         }
 
+        if (_player.Combat != null && _player.Combat.IsActionLocked)
+        {
+            Debug.Log($"[Skills] Acción en curso, no se puede castear {skill.id}");
+            return false;
+        }
+
         if (!_playerSkills.IsActiveSkill(skill.id))
         {
             Debug.Log($"[Skills] Skill no activa: {skill.id} (la otorga un item equipado)");
